@@ -125,7 +125,7 @@ Content-Security-Policy, allow in `connect-src`:
 ## Privacy
 
 There is no ITORO server. The AS number goes from your browser straight to
-the public services above; nothing is stored. The result can be printed to
+the public services above. The result can be printed to
 PDF or saved as JSON.
 
 ## Limitations

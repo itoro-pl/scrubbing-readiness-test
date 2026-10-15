@@ -18,15 +18,14 @@ window.NAPISY.ro = {
   trybOperator: 'Operatorul, din propriul AS',
   sprawdz: 'Verifică',
   sprawdzam: 'Se verifică…',
-  czas: 'Rezultatul în câteva secunde. Browserul dumneavoastră preia datele din servicii publice (printre altele baza de date RIPE, registrele IRR și PeeringDB). ITORO nu stochează nimic.',
+  czas: 'Rezultatul în câteva secunde. Browserul dumneavoastră preia datele din servicii publice (printre altele baza de date RIPE, registrele IRR și PeeringDB).',
   wersja: 'Versiunea 1.0.0 · 15 octombrie 2026',
   itoroNad: 'Instrumente oferite de ITORO',
   itoroH2: 'Îmbunătățim securitatea rețelei dumneavoastră',
   itoroP1: 'Implementăm și operăm sisteme de protecție împotriva atacurilor DDoS, în principal în rețelele operatorilor de telecomunicații și în centrele de date.',
   itoroPunkty: [
     '<strong>Detectarea atacului în 2–5 secunde</strong>, filtrare la marginea propriei rețele',
-    '<strong>Redirecționare către un centru de scrubbing</strong> atunci când atacul depășește capacitatea legăturilor',
-    '<strong>Verificarea ROA, IRR și a configurației BGP</strong> înainte de primul atac, nu în timpul lui'
+    '<strong>Redirecționare către un centru de scrubbing</strong> atunci când atacul depășește capacitatea legăturilor'
   ],
   itoroPrzycisk: 'Discutați cu noi',
   podReklama: 'Testul se bazează pe recomandările RFC și pe cerințele publicate ale operatorilor de centre de scrubbing, globali și polonezi. Folosește doar date pe care oricine le poate verifica în registre.',

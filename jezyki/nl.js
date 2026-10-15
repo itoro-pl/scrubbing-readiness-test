@@ -18,15 +18,14 @@ window.NAPISY.nl = {
   trybOperator: 'De operator, vanuit zijn eigen AS',
   sprawdz: 'Controleren',
   sprawdzam: 'Bezig met controleren…',
-  czas: 'Resultaat binnen enkele seconden. Uw browser haalt de gegevens op bij openbare diensten (o.a. de RIPE Database, IRR-registers en PeeringDB). ITORO slaat niets op.',
+  czas: 'Resultaat binnen enkele seconden. Uw browser haalt de gegevens op bij openbare diensten (o.a. de RIPE Database, IRR-registers en PeeringDB).',
   wersja: 'Versie 1.0.0 · 15 oktober 2026',
   itoroNad: 'Tools aangeboden door ITORO',
   itoroH2: 'Wij verbeteren de beveiliging van uw netwerk',
   itoroP1: 'Wij implementeren en beheren DDoS-beschermingssystemen, vooral in netwerken van telecomoperators en in datacenters.',
   itoroPunkty: [
     '<strong>Aanval gedetecteerd binnen 2–5 seconden</strong>, filtering aan de rand van uw eigen netwerk',
-    '<strong>Omleiding naar een scrubbingcentrum</strong> wanneer een aanval de capaciteit van uw verbindingen overschrijdt',
-    '<strong>Controle van ROA\'s, IRR en BGP-configuratie</strong> vóór de eerste aanval, niet tijdens'
+    '<strong>Omleiding naar een scrubbingcentrum</strong> wanneer een aanval de capaciteit van uw verbindingen overschrijdt'
   ],
   itoroPrzycisk: 'Neem contact op',
   podReklama: 'De test is gebaseerd op RFC-aanbevelingen en op de gepubliceerde eisen van scrubbingcentra, wereldwijd en in Polen. Hij gebruikt alleen gegevens die iedereen in de registers kan controleren.',

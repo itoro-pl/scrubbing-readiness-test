@@ -18,15 +18,14 @@ window.NAPISY.it = {
   trybOperator: 'L’operatore, dal proprio AS',
   sprawdz: 'Verifica',
   sprawdzam: 'Verifica in corso…',
-  czas: 'Risultato in pochi secondi. È il tuo browser a recuperare i dati da servizi pubblici (tra cui il RIPE Database, i registri IRR e PeeringDB). ITORO non memorizza nulla.',
+  czas: 'Risultato in pochi secondi. È il tuo browser a recuperare i dati da servizi pubblici (tra cui il RIPE Database, i registri IRR e PeeringDB).',
   wersja: 'Versione 1.0.0 · 15 ottobre 2026',
   itoroNad: 'Strumenti offerti da ITORO',
   itoroH2: 'Miglioriamo la sicurezza della tua rete',
   itoroP1: 'Implementiamo e gestiamo sistemi di protezione dagli attacchi DDoS, soprattutto nelle reti degli operatori di telecomunicazioni e nei data center.',
   itoroPunkty: [
     '<strong>Rilevamento dell’attacco in 2–5 secondi</strong>, filtraggio al bordo della tua rete',
-    '<strong>Deviazione verso uno scrubbing center</strong> quando l’attacco supera la capacità dei tuoi collegamenti',
-    '<strong>Revisione di ROA, IRR e configurazione BGP</strong> prima del primo attacco, non durante'
+    '<strong>Deviazione verso uno scrubbing center</strong> quando l’attacco supera la capacità dei tuoi collegamenti'
   ],
   itoroPrzycisk: 'Parla con noi',
   podReklama: 'Il test si basa sulle raccomandazioni RFC e sui requisiti pubblicati dagli operatori di scrubbing center, internazionali e polacchi. Usa solo dati che chiunque può verificare nei registri.',

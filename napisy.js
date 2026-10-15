@@ -12,7 +12,7 @@ pl: {
   pomin: 'Przejdź do treści',
   nadtytul: 'Darmowe narzędzia',
   h1: 'Czy Twoje prefiksy są gotowe na przekierowanie do scrubbing center?',
-  heroH: 'W czasie ataku DDoS ruch przekierowuje się do scrubbing center, ogłaszając prefiksy <strong>/24</strong> (IPv6: <strong>/48</strong>) wydzielone z większych bloków. Jeżeli ROA na to nie pozwala albo w bazie RIPE brakuje obiektu route, ogłoszenie zostanie odrzucone przez sieci walidujące RPKI i przez filtry operatora — dokładnie wtedy, gdy ochrona jest najbardziej potrzebna. Narzędzie sprawdza to na danych publicznych i podaje, co poprawić.',
+  heroH: 'W czasie ataku DDoS ruch przekierowuje się do scrubbing center, ogłaszając prefiksy <strong>/24</strong> (IPv6: <strong>/48</strong>) wydzielone z większych bloków. Jeżeli ROA na to nie pozwala albo w bazie RIR brakuje obiektu route, ogłoszenie zostanie odrzucone przez sieci walidujące RPKI i przez filtry operatora — dokładnie wtedy, gdy ochrona jest najbardziej potrzebna. Narzędzie sprawdza to na danych publicznych i podaje, co poprawić.',
   kartaTytul: 'Test gotowości prefiksów',
   wiodacy: 'Podaj numer swojego AS. Narzędzie pobierze ogłaszane prefiksy, ROA, obiekty route, AS-SET i dane właściciela zasobów, a potem sprawdzi je względem zaleceń RFC i typowych wymagań operatorów scrubbing center.',
   poleAs: 'Numer AS',
@@ -24,15 +24,14 @@ pl: {
   trybOperator: 'Operator, ze swojego AS',
   sprawdz: 'Sprawdź',
   sprawdzam: 'Sprawdzam…',
-  czas: 'Wynik w kilkanaście sekund. Dane pobiera Twoja przeglądarka z publicznych serwisów (m.in. z bazy RIPE, rejestrów IRR i PeeringDB). ITORO niczego nie zapisuje.',
+  czas: 'Wynik w kilkanaście sekund. Dane pobiera Twoja przeglądarka z publicznych serwisów (m.in. z bazy RIPE, rejestrów IRR i PeeringDB).',
   wersja: 'Wersja 1.0.0 · 15 października 2026',
   itoroNad: 'Narzędzia udostępnia ITORO',
   itoroH2: 'Poprawiamy bezpieczeństwo Twojej sieci',
   itoroP1: 'Wdrażamy i utrzymujemy systemy ochrony przed atakami DDoS, głównie w sieciach operatorów telekomunikacyjnych i w centrach danych.',
   itoroPunkty: [
     '<strong>Wykrycie ataku w 2–5 sekund</strong>, filtrowanie na brzegu Twojej sieci',
-    '<strong>Przekierowanie do scrubbing center</strong>, gdy atak przekracza przepustowość łączy',
-    '<strong>Przegląd ROA, IRR i konfiguracji BGP</strong> przed pierwszym atakiem, a nie w jego trakcie'
+    '<strong>Przekierowanie do scrubbing center</strong>, gdy atak przekracza przepustowość łączy'
   ],
   itoroPrzycisk: 'Porozmawiaj z nami',
   podReklama: 'Test powstał po przeglądzie zaleceń RFC i publicznych wymagań operatorów scrubbing center — globalnych i polskich. Opiera się wyłącznie na danych, które każdy może sprawdzić w rejestrach.',
@@ -196,15 +195,14 @@ en: {
   trybOperator: 'The operator, from its own AS',
   sprawdz: 'Check',
   sprawdzam: 'Checking…',
-  czas: 'Results in a few seconds. Your browser fetches the data from public services (including the RIPE Database, IRR registries and PeeringDB). ITORO stores nothing.',
+  czas: 'Results in a few seconds. Your browser fetches the data from public services (including the RIPE Database, IRR registries and PeeringDB).',
   wersja: 'Version 1.0.0 · 15 October 2026',
   itoroNad: 'Tools provided by ITORO',
   itoroH2: 'We improve the security of your network',
   itoroP1: 'We deploy and operate DDoS protection systems, mainly in telecommunications networks and data centres.',
   itoroPunkty: [
     '<strong>Attack detected in 2–5 seconds</strong>, filtering at your own network edge',
-    '<strong>Diversion to a scrubbing centre</strong> when an attack exceeds your link capacity',
-    '<strong>Review of ROAs, IRR and BGP configuration</strong> before the first attack, not during it'
+    '<strong>Diversion to a scrubbing centre</strong> when an attack exceeds your link capacity'
   ],
   itoroPrzycisk: 'Talk to us',
   podReklama: 'The test is based on RFC recommendations and on the published requirements of scrubbing centre operators, global and Polish. It uses only data anyone can check in the registries.',

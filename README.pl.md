@@ -102,7 +102,7 @@ Wszystkie te serwisy wysyłają nagłówki CORS. Jeśli serwer wysyła nagłówe
 
 ## Prywatność
 
-Nie ma serwera ITORO. Numer AS trafia z przeglądarki prosto do publicznych serwisów i nic nie jest zapisywane. Wynik można wydrukować do PDF albo zapisać jako JSON.
+Nie ma serwera ITORO. Numer AS trafia z przeglądarki prosto do publicznych serwisów. Wynik można wydrukować do PDF albo zapisać jako JSON.
 
 ## Ograniczenia
 

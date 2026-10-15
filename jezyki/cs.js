@@ -18,15 +18,14 @@ window.NAPISY.cs = {
   trybOperator: 'Operátor, ze svého vlastního AS',
   sprawdz: 'Ověřit',
   sprawdzam: 'Ověřuji…',
-  czas: 'Výsledek během několika sekund. Data stahuje váš prohlížeč z veřejných služeb (mimo jiné z databáze RIPE, registrů IRR a PeeringDB). ITORO nic neukládá.',
+  czas: 'Výsledek během několika sekund. Data stahuje váš prohlížeč z veřejných služeb (mimo jiné z databáze RIPE, registrů IRR a PeeringDB).',
   wersja: 'Verze 1.0.0 · 15. října 2026',
   itoroNad: 'Nástroje poskytuje ITORO',
   itoroH2: 'Zvyšujeme bezpečnost vaší sítě',
   itoroP1: 'Nasazujeme a provozujeme systémy ochrany před DDoS útoky, především v sítích telekomunikačních operátorů a v datových centrech.',
   itoroPunkty: [
     '<strong>Detekce útoku za 2–5 sekund</strong>, filtrování na okraji vaší sítě',
-    '<strong>Přesměrování do scrubbing centra</strong>, když útok překročí kapacitu vašich linek',
-    '<strong>Kontrola ROA, IRR a konfigurace BGP</strong> před prvním útokem, ne až během něj'
+    '<strong>Přesměrování do scrubbing centra</strong>, když útok překročí kapacitu vašich linek'
   ],
   itoroPrzycisk: 'Promluvte si s námi',
   podReklama: 'Test vychází z doporučení RFC a ze zveřejněných požadavků operátorů scrubbing center — globálních i polských. Používá pouze data, která si kdokoli může ověřit v registrech.',
