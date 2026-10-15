@@ -1,0 +1,37 @@
+Test gotowości prefiksów do scrubbing center
+Copyright (c) 2026 ITORO (itoro.com.pl)
+Wersja 1.0.0 z 2026-10-15
+
+Kod źródłowy objęty jest licencją GNU Affero General Public License
+w wersji 3 lub nowszej (plik LICENSE). Treść merytoryczna — opisy testów,
+instrukcje dla rejestrów RIR, teksty interfejsu i dokumentacja — licencją
+Creative Commons Uznanie autorstwa — Na tych samych warunkach 4.0
+(plik LICENSE-TRESC.md).
+
+Poniższe elementy NIE są objęte tymi licencjami.
+
+
+1. DANE Z SERWISÓW ZEWNĘTRZNYCH
+
+   Narzędzie nie zawiera żadnych danych o sieciach. W chwili sprawdzenia
+   przeglądarka użytkownika pobiera je wprost z publicznych serwisów:
+   RIPEstat i REST API bazy RIPE (RIPE NCC), serwerów RDAP regionalnych
+   rejestrów internetowych (wskazanych przez bootstrap IANA), IRR Explorer
+   (NLNOG) i PeeringDB. Dane te podlegają warunkom korzystania z tych
+   serwisów.
+
+
+2. DOKUMENTY, DO KTÓRYCH ODSYŁA NARZĘDZIE
+
+   Dokumenty RFC, dokumenty RIPE i dokumentacja RIR oraz operatorów
+   scrubbing center wymienione w SOURCES.md i ZRODLA.md są cytowane
+   wyłącznie przez odnośniki i streszczenia. Pozostają własnością ich
+   autorów.
+
+
+3. ZNAK TOWAROWY
+
+   ITORO oraz logo ITORO (obrazy/itoro-logo.svg) pozostają własnością
+   ITORO. Licencje na kod i treść nie obejmują prawa do posługiwania się
+   tym znakiem — kopia narzędzia rozpowszechniana po zmianach nie powinna
+   sugerować, że pochodzi od ITORO.

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test gotowości prefiksów do scrubbing center — ITORO</title>
+<meta name="description" content="Wpisz numer AS i sprawdź, czy ROA, obiekty route, AS-SET i dane w rejestrach pozwolą przekierować ruch do scrubbing center w czasie ataku DDoS. Bez konta, w przeglądarce.">
+<link rel="canonical" href="https://itoro.com.pl/narzedzia/scrubbing/">
+<link rel="alternate" hreflang="pl" href="https://itoro.com.pl/narzedzia/scrubbing/?jezyk=pl">
+<link rel="alternate" hreflang="en" href="https://itoro.com.pl/narzedzia/scrubbing/?jezyk=en">
+<link rel="alternate" hreflang="de" href="https://itoro.com.pl/narzedzia/scrubbing/?jezyk=de">
+<link rel="alternate" hreflang="fr" href="https://itoro.com.pl/narzedzia/scrubbing/?jezyk=fr">
+<link rel="alternate" hreflang="es" href="https://itoro.com.pl/narzedzia/scrubbing/?jezyk=es">
+<link rel="alternate" hreflang="pt" href="https://itoro.com.pl/narzedzia/scrubbing/?jezyk=pt">
+<link rel="alternate" hreflang="it" href="https://itoro.com.pl/narzedzia/scrubbing/?jezyk=it">
+<link rel="alternate" hreflang="nl" href="https://itoro.com.pl/narzedzia/scrubbing/?jezyk=nl">
+<link rel="alternate" hreflang="cs" href="https://itoro.com.pl/narzedzia/scrubbing/?jezyk=cs">
+<link rel="alternate" hreflang="ro" href="https://itoro.com.pl/narzedzia/scrubbing/?jezyk=ro">
+<link rel="alternate" hreflang="x-default" href="https://itoro.com.pl/narzedzia/scrubbing/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ITORO">
+<meta property="og:title" content="Czy Twoje prefiksy są gotowe na przekierowanie do scrubbing center?">
+<meta property="og:description" content="Darmowy test ROA, obiektów route, AS-SET i LOA przed atakiem DDoS. Wpisz numer AS — wynik w kilkanaście sekund.">
+<meta property="og:url" content="https://itoro.com.pl/narzedzia/scrubbing/">
+<link rel="icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+<script>try{var m=localStorage.getItem("itoro-motyw");if(m==="jasny"||m==="ciemny")document.documentElement.dataset.motyw=m}catch(e){}</script>
+</head>
+<body>
+<a class="pomin-nawigacje" href="#tresc" data-n="pomin">Przejdź do treści</a>
+
+<header class="gora">
+  <div class="srodek gora-tresc">
+    <a href="https://itoro.com.pl" aria-label="ITORO"><img class="logo" src="obrazy/itoro-logo.svg" alt="ITORO"></a>
+    <p class="gora-opis" data-n="goraOpis">Zabezpieczamy sieci i chronimy je przed atakami DDoS.</p>
+    <div class="gora-kontakt">
+      <button type="button" class="przelacznik-motywu" id="motyw" aria-pressed="false">☾</button>
+      <label class="jezyki"><span class="sr">Język / Language</span><select id="wyborJezyka" aria-label="Język / Language"><option value="pl">PL</option><option value="en">EN</option></select></label>
+      <span class="gora-kreska" aria-hidden="true">|</span>
+      <a class="gora-link" href="https://itoro.com.pl">itoro.com.pl</a>
+      <span class="gora-kreska" aria-hidden="true">|</span>
+      <!-- Adres poczty składa skrypt z dwóch odwróconych fragmentów (jak w /narzedzia/). -->
+      <span class="poczta" data-a="selas" data-b="lp.moc.oroti"><noscript>itoro.com.pl</noscript></span>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="srodek">
+    <p class="nadtytul" data-n="nadtytul">Darmowe narzędzia</p>
+    <h1 data-n="h1">Czy Twoje prefiksy są gotowe na przekierowanie do scrubbing center?</h1>
+    <p class="hero-opis" data-nh="heroH"></p>
+  </div>
+</section>
+
+<main class="srodek" id="tresc">
+  <div class="pas">
+    <article class="karta">
+      <h2 data-n="kartaTytul">Test gotowości prefiksów</h2>
+      <p class="wiodacy" data-n="wiodacy"></p>
+      <form id="formularz" novalidate>
+        <div class="pola">
+          <label class="pole">
+            <span data-n="poleAs">Numer AS</span>
+            <input id="pAs" name="as" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" required data-np="poleAsPomoc" placeholder="np. 64496 albo AS64496">
+          </label>
+          <label class="pole">
+            <span data-n="poleOperator">AS operatora scrubbing center (opcjonalnie)</span>
+            <input id="pOp" name="op" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="AS…" aria-describedby="pOpPomoc">
+            <small id="pOpPomoc" class="pomoc" data-n="poleOperatorPomoc"></small>
+          </label>
+        </div>
+        <fieldset class="tryb">
+          <legend data-n="poleTryb">Kto będzie ogłaszał Twoje prefiksy w czasie ataku?</legend>
+          <label><input type="radio" name="tryb" value="klient" checked> <span data-n="trybKlient"></span></label>
+          <label><input type="radio" name="tryb" value="operator" id="trybOp"> <span data-n="trybOperator"></span></label>
+        </fieldset>
+        <div class="akcje">
+          <button class="przycisk" id="sprawdz" type="submit"><span data-n="sprawdz">Sprawdź</span> <span class="strzalka" aria-hidden="true">&rarr;</span></button>
+          <p class="postep" id="postep" role="status" hidden></p>
+        </div>
+        <p class="blad" id="blad" role="alert" hidden></p>
+      </form>
+      <p class="czas" data-n="czas"></p>
+      <p class="wersja" data-n="wersja"></p>
+    </article>
+
+    <div class="kolumna-prawa">
+      <aside class="karta karta-itoro">
+        <p class="nadtytul-firmy" data-n="itoroNad">Narzędzia udostępnia ITORO</p>
+        <h2 data-n="itoroH2">Poprawiamy bezpieczeństwo Twojej sieci</h2>
+        <p data-n="itoroP1"></p>
+        <ul class="lista" id="itoroPunkty"></ul>
+        <div class="akcje"><a class="przycisk" href="https://itoro.com.pl/contact/" data-n="itoroPrzycisk">Porozmawiaj z nami</a></div>
+      </aside>
+      <p class="pod-reklama" data-n="podReklama"></p>
+    </div>
+  </div>
+
+  <div id="wynik" class="wynik" hidden></div>
+</main>
+
+<footer class="stopka srodek">
+  <p>© ITORO · <a href="https://itoro.com.pl/privacy-policy/">Privacy</a> · <a href="/narzedzia/">/narzedzia/</a></p>
+</footer>
+
+<script src="napisy.js"></script>
+<script src="rir.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
