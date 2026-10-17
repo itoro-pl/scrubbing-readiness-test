@@ -33,7 +33,7 @@ window.NAPISY.cs = {
   krok: {
     as: 'data AS', prefiksy: 'oznamované prefixy', roa: 'ROA a ASPA', irr: 'objekty route (IRR)',
     autnum: 'aut-num a AS-SET', pdb: 'PeeringDB', abuse: 'abuse kontakt', sasiedzi: 'BGP sousedé',
-    pref: (n, m) => `podrobnosti prefixů (${n}/${m})`, wlasciciel: (n, m) => `držitelé zdrojů (${n}/${m})`, operator: 'ROA operátora'
+    wlaczenia: 'kdo zahrnuje váš AS do AS-SET', pref: (n, m) => `podrobnosti prefixů (${n}/${m})`, wlasciciel: (n, m) => `držitelé zdrojů (${n}/${m})`, operator: 'ROA operátora'
   },
   bladAs: 'Zadejte platné číslo AS (1–4294967294).',
   bladSieci: (u) => `Data se nepodařilo stáhnout (${u}). Zkuste to prosím za chvíli znovu.`,
@@ -55,11 +55,13 @@ window.NAPISY.cs = {
   krokTyt: {
     dlugosc: 'Nahraďte příliš dlouhé prefixy', roa: 'Opravte ROA', roaOp: 'Přidejte ROA pro scrubbing centrum',
     aspa: 'Doplňte ASPA', route: 'Vytvořte objekty route', usun: 'Odstraňte zastaralé objekty route',
-    loa: 'Připravte LOA', asset: 'Upravte AS-SET', abuse: 'Nastavte abuse kontakt', pdb: 'Doplňte PeeringDB', inne: 'Ostatní'
+    loa: 'Připravte LOA', asset: 'Upravte AS-SET', wlaczenia: 'Ověřte, kdo zahrnuje váš AS do svých AS-SET', abuse: 'Nastavte abuse kontakt', pdb: 'Doplňte PeeringDB', inne: 'Ostatní'
   },
   ogolne: {
     dlugosc: ['Prefixy delší než /24 (IPv6: /48) nahraďte nadřazeným prefixem /24 (/48), nebo je oznamujte společně s ním.'],
     loa: ['Sestavte seznam prefixů z tohoto kroku a držitele každého z nich (data z databáze RIR).', 'Požádejte držitele adresního prostoru — a pokud prefix oznamuje nadřazený operátor, také jeho — o podpis LOA podle níže uvedeného vzoru.', 'Operátoři obvykle přijímají LOA jako PDF na hlavičkovém papíře firmy, podepsané oprávněnou osobou.'],
+    asset: ['Zásada: do AS-SET dávejte jen to, co dál oznamujete v BGP, tedy sebe a své zákazníky. Nepřidávejte IXP ani peery.', 'Než zahrnete AS-SET zákazníka, ověřte jeho velikost; odebírejte zákazníky, kteří odešli, a sadu pravidelně kontrolujte.'],
+    wlaczenia: ['Projděte seznam sad z tohoto kroku. Vlastníka najdete v objektu as-set (mnt-by, admin-c) v databázi IRR.', 'Pokud sada patří síti, se kterou nemáte vztah BGP, požádejte o odebrání svého AS. Pokud nereaguje, nahlaste to provozovateli databáze IRR.', 'Zveřejněte ASPA se seznamem svých nadřazených operátorů — omezuje to zneužití vašeho AS prostřednictvím cizích AS-SET.', 'Zaveďte trvalé sledování nových AS-SET, které odkazují na váš AS.'],
     pdb: ['Přihlaste se na peeringdb.com a otevřete záznam své sítě (Network).', 'Do pole „IRR as-set/route-set” zadejte svůj AS-SET včetně zdroje, např. RIPE::AS64496:AS-ZAKAZNICI.', 'Uložte a ověřte, že pole odpovídá aut-num.'],
     inne: []
   },
@@ -102,7 +104,20 @@ window.NAPISY.cs = {
     upstream: { ok: (n) => `Počet nadřazených operátorů viditelných v BGP: ${n}.`, zal: (n) => `Viditelný je jen ${n} nadřazený operátor. Při jediné lince ji útok zahltí dřív, než přesměrování začne fungovat — zvažte druhou linku nebo RTBH a BGP FlowSpec u operátora.` },
     aspa: { ok: (l) => `Objekt ASPA existuje (provideři: ${l}).`, brakOp: (op) => `Objekt ASPA neobsahuje AS${op}. Po přesměrování budou sítě validující ASPA považovat cestu přes scrubbing centrum za neplatnou — přidejte AS${op} do seznamu providerů.`, info: 'Objekt ASPA chybí. Není povinný; pokud ho vytvoříte, uveďte mezi providery i AS scrubbing centra.' },
     opRoa: { ok: (op) => `ROA pro AS${op} pokrývají každý /24 (/48).`, blok: (op, n) => `Operátor oznamuje ze svého AS, ale ROA pro AS${op} nepokrývá část prefixů /24 (/48) (počet: ${n}). Sítě validující RPKI tato oznámení zahodí.` },
-    nieaktualne: { zal: (l) => `Objekty route s vaším AS pro prefixy, které neoznamujete: ${l}. Zastaralé odstraňte — nepořádek v IRR ztěžuje ověření u operátora.` }
+    nieaktualne: { zal: (l) => `Objekty route s vaším AS pro prefixy, které neoznamujete: ${l}. Zastaralé odstraňte — nepořádek v IRR ztěžuje ověření u operátora.` },
+    higiena: {
+      rozmiarOk: (s, n, r) => `${s} po rozvinutí obsahuje ${n} AS (zákazníci viditelní v BGP: ${r}). Velikost odpovídá síti.`,
+      rozmiarSredni: (s, n, r) => `${s} po rozvinutí obsahuje ${n} AS, ale počet zákazníků viditelných v BGP je ${r}. Ověřte, zda všechny tyto AS dál oznamujete.`,
+      rozmiarDuzy: (s, n, r) => `${s} po rozvinutí obsahuje ${n} AS, ale počet zákazníků viditelných v BGP je jen ${r}. Filtr sestavený z takové sady propustí únik tras od zákazníka a usnadňuje vydávání se za cizí prefixy — zmenšete sadu na svůj zákaznický kužel (customer cone).`,
+      glebokosc: (s, d) => `${s} má hloubku zanoření ${d}. Rekurze se snadno vymkne kontrole — omezte ji na sady svých přímých zákazníků.`,
+      skladowe: (s, l) => `Největší část ${s} tvoří: ${l}. Než AS-SET těchto zákazníků zahrnete, ověřte jejich velikost.`,
+      ixp: (s, l) => `${s} obsahuje sady, které vypadají jako seznamy členů IXP nebo peerů: ${l}. Do sady zákazníků nepatří IXP ani peeři — dál je neoznamujete.`,
+      nieaktualni: (s, l) => `${s} obsahuje AS, které v BGP nejsou vidět jako vaši zákazníci: ${l}. Pokud jde o zákazníky, kteří odešli, odeberte je.`,
+      wlaczeniaObce: (k, l) => `Váš AS zahrnuly do svých AS-SET (jiných než seznamy peerů a IXP) sítě, se kterými není vidět vztah BGP (${k}): ${l}. Přesně tak vypadala předehra k pokusu o únos prefixů popsanému na DKNOG15. Každé takové zahrnutí umožňuje dané síti oznamovat vaše prefixy přes své nadřazené operátory navzdory filtrům IRR — prověřte je a požádejte o odebrání.`,
+      wlaczeniaIxp: (k, l) => `Váš AS je v sadách peerů nebo členů IXP sítí, se kterými není vidět vztah BGP (${k}): ${l}. Obvykle jde o dokumentaci peeringu — ověřte, zda s nimi opravdu máte session. I takové sady lze zneužít k obejití filtrů.`,
+      wlaczeniaNieznane: (k, l) => `Váš AS je v AS-SET s názvy bez čísla AS vlastníka (${k}): ${l}. V databázi IRR ověřte, kdo je spravuje a zda jde o vaše operátory nebo IXP.`,
+      wlaczeniaOk: (k) => `Váš AS je v cizích AS-SET (počet: ${k}) — všechny patří vašim BGP sousedům nebo vám.`
+    }
   },
   p: {
     zaDlugi: (d) => `Prefix delší než /${d} — v internetu se filtruje (RFC 7454) a scrubbing centra ho nepřijmou.`,
@@ -142,6 +157,7 @@ window.NAPISY.cs = {
     ['Doba šíření', 'Nové ROA a objekty route se do filtrů dostanou za několik hodin až 48 hodin. Připravte je před útokem, ne až během něj.'],
     ['Oznámení a stažení', 'Dohodněte s operátorem, jak oznamovat /24 (prepend, community, potlačení oznámení do tranzitu) a jak bezpečně ukončit přesměrování — nejprve prefix oznamte sami, teprve pak ho stáhněte u operátora.'],
     ['Smyčky ve směrování', 'Pokud vám operátor posílá zpět specifičtější prefixy vašeho prostoru, odfiltrujte je na session, aby nevznikla smyčka.'],
+    ['Filtrování zákazníků', 'Filtrujte trasy od zákazníků podle jejich AS-SET a objektů route a před přijetím sady ověřte její velikost. Jedinou ochranou proti úniku tras od zákazníka je právě tento filtr.'],
     ['Zkouška nanečisto', 'Otestujte přesměrování jednoho /24 mimo útok a v looking glass ověřte, že je prefix viditelný a RPKI-valid.'],
     ['RTBH', 'Kvůli RTBH (prefixy /32, community BLACKHOLE z RFC 7999) ROA nerozšiřujte — RFC 9319 §6 to výslovně nedoporučuje. Přesměrování do scrubbing centra a RTBH jsou dvě samostatné věci.']
   ],
@@ -156,7 +172,9 @@ window.NAPISY.cs = {
     ['ASPA', 'autorizace nadřazených operátorů (IETF SIDROPS)'],
     ['ripe-705', 'povinný kontakt abuse-c v databázi RIPE'],
     ['Dokumentace RIR', 'RIPE NCC, ARIN, APNIC, AFRINIC, LACNIC: ROA, objekty route, as-set, abuse, ASPA'],
-    ['MANRS', 'registrace v IRR a RPKI, aktuální kontakty'],
+    ['MANRS', 'registrace v IRR a RPKI, aktuální kontakty; AS-SET jako popis zákaznického kužele (modul 2)'],
+    ['L. Jarlskov (Telia)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): účel AS-SET, velikost, kdo vás zahrnuje'],
+    ['D. Madory, J. Snijders', '„The Scourge of Excessive AS-SETs” (2025): přerostlé AS-SET a úniky tras'],
     ['Operátoři', 'veřejná dokumentace pro zavedení služby u známých operátorů scrubbing center: minimální prefix, ROA, IRR v databázi RIR, LOA, tunel']
   ],
   podstawaLink: 'Úplný seznam zdrojů s odkazy',

@@ -35,6 +35,13 @@ Gdy atak przekracza przepustowość łączy, ruch kieruje się do scrubbing cent
 - ROA dla AS operatora, gdy to on jest źródłem ogłoszenia;
 - nieaktualne obiekty route.
 
+**Higiena AS-SET** (według wystąpień Lassego Jarlskova na BalticNOG 2025 i DKNOG15 oraz artykułu Douga Madory'ego i Joba Snijdersa „The Scourge of Excessive AS-SETs”):
+- rozmiar po rozwinięciu wobec klientów widocznych w BGP;
+- głębokość zagnieżdżeń i największe składowe;
+- zbiory IXP i peerów w zbiorze klientów;
+- członkowie niewidoczni w BGP;
+- **kto włącza Twój AS do swoich AS-SET**; oznaczane są sieci bez relacji BGP, bo tak wyglądał wstęp do próby przejęcia ruchu opisany na DKNOG15.
+
 **Na poziomie prefiksu:**
 - długość nie większa niż /24 i /48;
 - stan RPKI;

@@ -47,7 +47,16 @@ Resource holder and abuse data for every RIR come from RDAP; the
 authoritative server is found through the [IANA RDAP bootstrap](https://data.iana.org/rdap/)
 ([RFC 9224](https://www.rfc-editor.org/rfc/rfc9224)).
 
-## 4. Other sources
+## 4. AS-SET hygiene — talks and articles
+
+| Author(s) | Title, venue, date | What we take from it | Test in the tool |
+|---|---|---|---|
+| Lasse Jarlskov (Telia Company) | „Securing your AS-set”, [BalticNOG 2025](https://events.balticnog.org/event/1/contributions/51/), Vilnius, 25 September 2025; same talk at the Netnod meeting, 8 October 2025 ([slides, PDF](https://www.netnod.se/sites/default/files/2025-10/10.Securing%20your%20AS-Set-Netnod.pptx_.pdf)) | three AS-SET types (customers, peers, IXP members) — only the customer set is used to build filters; rule of thumb „would you re-advertise this in BGP?”; bigger is not better, recursion is dangerous; clean up regularly; check your customers' AS-SET sizes; check who includes you | AS-SET size against BGP customers, nesting depth, largest member sets, IXP/peer sets inside a customer set, members not seen in BGP, who includes your AS |
+| Lasse Jarlskov (Telia Company); ASPA part with Job Snijders | „Prelude to a BGP hijack?”, [DKNOG15](https://events.dknog.dk/event/32/contributions/297/), Copenhagen, 7 March 2025 ([video](https://www.youtube.com/watch?v=ejwp6b6lVWQ)) | anyone can put your AS in their AS-SET; with a spoofed origin the route is ROA-valid and passes RPSL-based transit filters; defence: ASPA and monitoring IRRs for new references to your AS | who includes your AS (sets of networks with no BGP relationship are flagged); ASPA recommendation; monitoring step |
+| Doug Madory, Job Snijders | [„The Scourge of Excessive AS-SETs”](https://www.kentik.com/blog/the-scourge-of-excessive-as-sets/), Kentik blog, 23 April 2025 | thousands of AS-SETs expand to over 1,000 ASNs, some beyond the whole routing table; such filters did not stop real route leaks; keep membership minimal, avoid recursion, use hierarchical names, name the authoritative IRR source in PeeringDB | AS-SET size and depth, hierarchical name, PeeringDB AS-SET with source |
+| MANRS | [„Module 2: IRRs, RPKI, and PeeringDB”](https://manrs.org/resources/training/tutorials/irrs-rpki-peeringdb/) (MANRS training) | document your customer cone with an as-set (e.g. AS64500:AS-CUSTOMERS), register route objects, publish routing policy in aut-num, keep PeeringDB up to date | AS-SET in aut-num export, AS-SET contains your AS, PeeringDB |
+
+## 5. Other sources
 
 | Source | What we take from it |
 |---|---|
@@ -55,7 +64,7 @@ authoritative server is found through the [IANA RDAP bootstrap](https://data.ian
 | [IRR Explorer (NLNOG)](https://irrexplorer.nlnog.net/) | route objects from all IRRs with their RPKI status — data source |
 | [PeeringDB API](https://www.peeringdb.com/apidocs/) | the AS-SET many operators use to build filters — data source |
 
-## 5. Scrubbing provider documentation
+## 6. Scrubbing provider documentation
 
 The tool itself does not name providers; it refers to „typical requirements of
 scrubbing centre operators”. The list below is what those requirements are
@@ -78,7 +87,7 @@ Not used, because no public technical requirements were found: Radware,
 NETSCOUT Arbor Cloud, Corero, Voxility, Path.net and Polish operators other
 than NASK.
 
-## 6. From sources to tests
+## 7. From sources to tests
 
 | Test | Sources |
 |---|---|
@@ -92,4 +101,6 @@ than NASK.
 | abuse-c | ripe-705; MANRS |
 | AS-SET contains your AS, hierarchical name | RFC 2622; RIPE Database documentation; MANRS |
 | AS0 ROA, conflicting route objects with another origin | RFC 6483; RFC 6811 |
+| AS-SET size, depth, largest members, IXP/peer sets, members not seen in BGP | Jarlskov (BalticNOG 2025); Madory & Snijders (2025); MANRS module 2 |
+| Who includes your AS in their AS-SETs | Jarlskov (BalticNOG 2025, DKNOG15) |
 | Broad maxLength (recommendation) | RFC 9319 §5 |

@@ -44,6 +44,13 @@ database and has a hierarchical name · AS-SET in PeeringDB · at least two
 upstreams · ASPA (includes the scrubbing centre's AS) · ROAs for the
 scrubbing centre's AS when it originates · stale route objects.
 
+**AS-SET hygiene** (after Lasse Jarlskov's BalticNOG 2025 and DKNOG15 talks
+and Doug Madory & Job Snijders' „The Scourge of Excessive AS-SETs”): expanded
+size against customers visible in BGP · nesting depth · largest member sets ·
+IXP/peer sets inside a customer set · members not seen in BGP · **who includes
+your AS in their AS-SETs** (networks with no BGP relationship are flagged —
+the prelude to a hijack described at DKNOG15).
+
 **Prefix level:** length ≤ /24 and ≤ /48 · RPKI state · **how many /24 (/48)
 blocks will be RPKI-valid after splitting** · broad maxLength · AS0 ROAs ·
 other-AS ROAs · route object in a RIR database (not RADB, not RIPE-NONAUTH) ·

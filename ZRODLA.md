@@ -43,7 +43,16 @@ Testy opierają się na trzech rodzajach źródeł. Pierwsze to dokumenty RFC or
 
 Właściciela zasobu i kontakt abuse narzędzie pobiera przez RDAP dla każdego RIR. Właściwy serwer wskazuje [bootstrap IANA](https://data.iana.org/rdap/).
 
-## 4. Pozostałe źródła
+## 4. Higiena AS-SET: wystąpienia i artykuły
+
+| Autor | Tytuł, miejsce, data | Co z tego bierzemy | Test w narzędziu |
+|---|---|---|---|
+| Lasse Jarlskov (Telia Company) | „Securing your AS-set”, [BalticNOG 2025](https://events.balticnog.org/event/1/contributions/51/), Wilno, 25 września 2025 r.; to samo wystąpienie na spotkaniu Netnod 8 października 2025 r. ([slajdy, PDF](https://www.netnod.se/sites/default/files/2025-10/10.Securing%20your%20AS-Set-Netnod.pptx_.pdf)) | trzy rodzaje AS-SET (klienci, peerzy, członkowie IXP), z których do budowy filtrów służy tylko zbiór klientów; zasada „czy ogłosiłbyś to dalej w BGP?”; większy zbiór nie jest lepszy, a rekurencja bywa groźna; regularne porządki; sprawdzanie rozmiaru AS-SET klientów; sprawdzanie, kto Cię włącza | rozmiar AS-SET wobec klientów widocznych w BGP, głębokość zagnieżdżeń, największe składowe, zbiory IXP i peerów w zbiorze klientów, członkowie niewidoczni w BGP, kto włącza Twój AS |
+| Lasse Jarlskov (Telia Company); część o ASPA z Jobem Snijdersem | „Prelude to a BGP hijack?”, [DKNOG15](https://events.dknog.dk/event/32/contributions/297/), Kopenhaga, 7 marca 2025 r. ([nagranie](https://www.youtube.com/watch?v=ejwp6b6lVWQ)) | każdy może dopisać Twój AS do swojego AS-SET; przy sfałszowanym origin trasa jest zgodna z ROA i przechodzi filtry RPSL operatora tranzytowego; obrona: ASPA i monitorowanie IRR pod kątem nowych odwołań do Twojego AS | kto włącza Twój AS (zbiory sieci bez relacji BGP są oznaczane); zalecenie ASPA; krok o monitoringu |
+| Doug Madory, Job Snijders | [„The Scourge of Excessive AS-SETs”](https://www.kentik.com/blog/the-scourge-of-excessive-as-sets/), blog Kentik, 23 kwietnia 2025 r. | tysiące AS-SET rozwijają się do ponad 1000 AS, niektóre do więcej niż cała tablica routingu; takie filtry nie zatrzymały rzeczywistych wycieków tras; członków ma być jak najmniej, bez rekurencji, z nazwą hierarchiczną i z autorytatywnym źródłem IRR wskazanym w PeeringDB | rozmiar i głębokość AS-SET, nazwa hierarchiczna, AS-SET w PeeringDB ze źródłem |
+| MANRS | [„Module 2: IRRs, RPKI, and PeeringDB”](https://manrs.org/resources/training/tutorials/irrs-rpki-peeringdb/) (szkolenie MANRS) | stożek klientów opisany obiektem as-set (np. AS64500:AS-CUSTOMERS), obiekty route, polityka routingu w aut-num, aktualne PeeringDB | AS-SET w eksporcie aut-num, AS-SET zawiera Twój AS, PeeringDB |
+
+## 5. Pozostałe źródła
 
 | Źródło | Co z niego bierzemy |
 |---|---|
@@ -51,7 +60,7 @@ Właściciela zasobu i kontakt abuse narzędzie pobiera przez RDAP dla każdego 
 | [IRR Explorer (NLNOG)](https://irrexplorer.nlnog.net/) | obiekty route ze wszystkich IRR razem ze stanem RPKI; rozwijanie AS-SET (źródło danych) |
 | [PeeringDB API](https://www.peeringdb.com/apidocs/) | AS-SET, z którego wielu operatorów buduje filtry (źródło danych) |
 
-## 5. Dokumentacja operatorów scrubbing center
+## 6. Dokumentacja operatorów scrubbing center
 
 Samo narzędzie nie wymienia operatorów z nazwy, tylko pisze o „typowych wymaganiach operatorów scrubbing center”. Poniżej są dokumenty, na których te wymagania się opierają.
 
@@ -70,7 +79,7 @@ Samo narzędzie nie wymienia operatorów z nazwy, tylko pisze o „typowych wyma
 
 Pominęliśmy Radware, NETSCOUT Arbor Cloud, Corero, Voxility, Path.net i polskich operatorów poza NASK, bo nie znaleźliśmy ich publicznych wymagań technicznych.
 
-## 6. Od źródeł do testów
+## 7. Od źródeł do testów
 
 | Test | Źródła |
 |---|---|
@@ -84,4 +93,6 @@ Pominęliśmy Radware, NETSCOUT Arbor Cloud, Corero, Voxility, Path.net i polski
 | abuse-c | ripe-705, polityki APNIC, AFRINIC i LACNIC; MANRS |
 | AS-SET zawiera Twój AS, nazwa hierarchiczna | RFC 2622; dokumentacja bazy RIPE i APNIC; MANRS |
 | ROA z AS0, obiekty route z innym origin | RFC 6483; RFC 6811 |
+| Rozmiar i głębokość AS-SET, największe składowe, zbiory IXP i peerów, członkowie niewidoczni w BGP | Jarlskov (BalticNOG 2025); Madory i Snijders (2025); MANRS, moduł 2 |
+| Kto włącza Twój AS do swoich AS-SET | Jarlskov (BalticNOG 2025, DKNOG15) |
 | Szerokie maxLength (zalecenie) | RFC 9319 §5 |

@@ -33,7 +33,7 @@ window.NAPISY.nl = {
   krok: {
     as: 'AS-gegevens', prefiksy: 'aangekondigde prefixen', roa: 'ROA\'s en ASPA', irr: 'route-objecten (IRR)',
     autnum: 'aut-num en AS-SET', pdb: 'PeeringDB', abuse: 'abusecontact', sasiedzi: 'BGP-buren',
-    pref: (n, m) => `prefixdetails (${n}/${m})`, wlasciciel: (n, m) => `resourcehouders (${n}/${m})`, operator: 'ROA\'s van de operator'
+    wlaczenia: 'wie uw AS in AS-SETs opneemt', pref: (n, m) => `prefixdetails (${n}/${m})`, wlasciciel: (n, m) => `resourcehouders (${n}/${m})`, operator: 'ROA\'s van de operator'
   },
   bladAs: 'Voer een geldig AS-nummer in (1–4294967294).',
   bladSieci: (u) => `Gegevens konden niet worden opgehaald (${u}). Probeer het zo meteen opnieuw.`,
@@ -55,11 +55,13 @@ window.NAPISY.nl = {
   krokTyt: {
     dlugosc: 'Vervang te lange prefixen', roa: 'Corrigeer ROA\'s', roaOp: 'Voeg ROA\'s toe voor het scrubbingcentrum',
     aspa: 'Vul ASPA aan', route: 'Maak route-objecten aan', usun: 'Verwijder verouderde route-objecten',
-    loa: 'Bereid een LOA voor', asset: 'Ruim de AS-SET op', abuse: 'Stel het abusecontact in', pdb: 'Vul PeeringDB aan', inne: 'Overige'
+    loa: 'Bereid een LOA voor', asset: 'Ruim de AS-SET op', wlaczenia: 'Controleer wie uw AS in hun AS-SETs opneemt', abuse: 'Stel het abusecontact in', pdb: 'Vul PeeringDB aan', inne: 'Overige'
   },
   ogolne: {
     dlugosc: ['Vervang prefixen langer dan /24 (IPv6: /48) door de overkoepelende /24 (/48), of kondig ze samen daarmee aan.'],
     loa: ['Maak een lijst van de prefixen uit deze stap en de houder van elk prefix (gegevens uit de RIR-database).', 'Vraag de houder van de adresruimte — en de upstream, als die het prefix aankondigt — een LOA te ondertekenen volgens het onderstaande sjabloon.', 'Operators accepteren de LOA meestal als pdf op briefpapier van het bedrijf, ondertekend door een bevoegd persoon.'],
+    asset: ['Vuistregel: neem in uw AS-SET alleen op wat u in BGP doorgeeft — uzelf en uw klanten. Voeg geen IXP\'s of peers toe.', 'Controleer de omvang van de AS-SET van een klant voordat u die opneemt; verwijder vertrokken klanten en controleer de set regelmatig.'],
+    wlaczenia: ['Bekijk de sets die in deze stap worden genoemd. De eigenaar staat in het as-set-object (mnt-by, admin-c) in de IRR.', 'Hoort een set bij een netwerk waarmee u geen BGP-relatie hebt, vraag dan om uw AS te verwijderen. Komt er geen antwoord, meld het dan bij de beheerder van de IRR-database.', 'Publiceer een ASPA met uw upstreams — dat beperkt misbruik van uw AS via AS-SETs van andere netwerken.', 'Zet doorlopende monitoring op van nieuwe AS-SETs die naar uw AS verwijzen.'],
     pdb: ['Log in op peeringdb.com en open het record van uw netwerk (Network).', 'Vul bij „IRR as-set/route-set” uw AS-SET met bron in, bijv. RIPE::AS64496:AS-KLANTEN.', 'Sla op en controleer of het overeenkomt met uw aut-num.'],
     inne: []
   },
@@ -102,7 +104,20 @@ window.NAPISY.nl = {
     upstream: { ok: (n) => `Upstreams zichtbaar in BGP: ${n}.`, zal: (n) => `Slechts ${n} upstream zichtbaar. Met één verbinding verzadigt de aanval die voordat de omleiding werkt — overweeg een tweede verbinding of RTBH en BGP FlowSpec bij de upstream.` },
     aspa: { ok: (l) => `ASPA-object aanwezig (providers: ${l}).`, brakOp: (op) => `Het ASPA-object bevat AS${op} niet. Na omleiding is het pad via het scrubbingcentrum ongeldig voor ASPA-validerende netwerken — voeg AS${op} toe aan de providerlijst.`, info: 'Geen ASPA-object. Het is niet verplicht; als u er een aanmaakt, neem dan ook het AS van het scrubbingcentrum op als provider.' },
     opRoa: { ok: (op) => `ROA\'s voor AS${op} dekken elke /24 (/48).`, blok: (op, n) => `De operator kondigt aan vanuit zijn eigen AS, maar voor ${n} /24-(/48-)prefixen is er geen ROA voor AS${op}. RPKI-validerende netwerken zullen deze aankondigingen verwerpen.` },
-    nieaktualne: { zal: (l) => `Route-objecten met uw AS voor prefixen die u niet aankondigt: ${l}. Verwijder verouderde objecten — rommel in de IRR bemoeilijkt de verificatie.` }
+    nieaktualne: { zal: (l) => `Route-objecten met uw AS voor prefixen die u niet aankondigt: ${l}. Verwijder verouderde objecten — rommel in de IRR bemoeilijkt de verificatie.` },
+    higiena: {
+      rozmiarOk: (s, n, r) => `${s} wordt uitgevouwen tot ${n} AS'en (klanten zichtbaar in BGP: ${r}). De omvang past bij het netwerk.`,
+      rozmiarSredni: (s, n, r) => `${s} wordt uitgevouwen tot ${n} AS'en, terwijl BGP ${r} klanten laat zien. Controleer of u ze allemaal doorgeeft.`,
+      rozmiarDuzy: (s, n, r) => `${s} wordt uitgevouwen tot ${n} AS'en, terwijl BGP slechts ${r} klanten laat zien. Een filter op basis van zo'n set laat een route leak van een klant door en maakt het makkelijker om prefixen van andere netwerken te imiteren — beperk de set tot uw customer cone.`,
+      glebokosc: (s, d) => `${s} is ${d} niveaus diep genest. Recursie loopt snel uit de hand — beperk die tot de sets van uw directe klanten.`,
+      skladowe: (s, l) => `Het grootste deel van ${s} komt van: ${l}. Controleer de omvang van de AS-SETs van deze klanten voordat u ze opneemt.`,
+      ixp: (s, l) => `${s} bevat sets die eruitzien als ledenlijsten van IXP's of peerlijsten: ${l}. Een klantenset hoort geen IXP's of peers te bevatten — die geeft u niet door.`,
+      nieaktualni: (s, l) => `${s} bevat AS'en die in BGP niet als uw klanten zichtbaar zijn: ${l}. Als het vertrokken klanten zijn, verwijder ze dan.`,
+      wlaczeniaObce: (k, l) => `Netwerken zonder zichtbare BGP-relatie met u hebben uw AS opgenomen in hun AS-SETs (anders dan peer- of IXP-lijsten) (${k}): ${l}. Zo zag de aanloop naar de kapingspoging eruit die op DKNOG15 werd beschreven. Elke zo'n opname stelt dat netwerk in staat uw prefixen via zijn upstreams aan te kondigen ondanks IRR-filters — controleer ze en vraag om verwijdering.`,
+      wlaczeniaIxp: (k, l) => `Uw AS staat in peer- of IXP-ledensets van netwerken zonder zichtbare BGP-relatie met u (${k}): ${l}. Meestal documenteren die peering — controleer of u echt een sessie met hen hebt. Ook zulke sets kunnen worden gebruikt om filters te omzeilen.`,
+      wlaczeniaNieznane: (k, l) => `Uw AS staat in AS-SETs waarvan de naam geen AS-nummer van de eigenaar bevat (${k}): ${l}. Controleer in de IRR wie ze beheert en of het uw providers of IXP's zijn.`,
+      wlaczeniaOk: (k) => `Uw AS staat in ${k} AS-SETs van anderen — die horen allemaal bij uw BGP-buren of bij uzelf.`
+    }
   },
   p: {
     zaDlugi: (d) => `Prefix langer dan /${d} — wordt op het internet gefilterd (RFC 7454) en niet geaccepteerd door scrubbingcentra.`,
@@ -142,6 +157,7 @@ window.NAPISY.nl = {
     ['Propagatietijd', 'Nieuwe ROA\'s en route-objecten bereiken de filters binnen enkele uren tot 48 uur. Bereid ze voor vóór een aanval, niet tijdens.'],
     ['Aankondiging en intrekking', 'Spreek met de operator af hoe de /24\'s worden aangekondigd (prepend, communities, onderdrukken van de transitaankondiging) en hoe de omleiding veilig wordt ingetrokken — kondig het prefix eerst zelf aan en trek het daarna bij de operator in.'],
     ['Routinglussen', 'Als de operator meer specifieke prefixen van uw adresruimte naar u terugstuurt, filter die dan op de sessie om een lus te voorkomen.'],
+    ['Filtering van klanten', 'Filter klantroutes op basis van hun AS-SET en route-objecten, en controleer de omvang van de set voordat u die accepteert. Dat filter is de enige barrière tegen een route leak van een klant.'],
     ['Proefrun', 'Test de omleiding van één /24 buiten een aanval en controleer in een looking glass of het prefix zichtbaar en RPKI-valid is.'],
     ['RTBH', 'Verruim ROA\'s niet voor RTBH (/32-prefixen, BLACKHOLE-community uit RFC 7999) — RFC 9319 §6 raadt dat uitdrukkelijk af. Omleiding naar een scrubbingcentrum en RTBH zijn twee aparte zaken.']
   ],
@@ -156,7 +172,9 @@ window.NAPISY.nl = {
     ['ASPA', 'autorisatie van upstreams (IETF SIDROPS)'],
     ['ripe-705', 'verplichte abuse-c in de RIPE Database'],
     ['RIR-documentatie', 'RIPE NCC, ARIN, APNIC, AFRINIC, LACNIC: ROA\'s, route-objecten, as-sets, abuse, ASPA'],
-    ['MANRS', 'registratie in IRR en RPKI, actuele contactgegevens'],
+    ['MANRS', 'registratie in IRR en RPKI, actuele contactgegevens; AS-SET als beschrijving van de customer cone (module 2)'],
+    ['L. Jarlskov (Telia)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): doel van de AS-SET, omvang, wie u opneemt'],
+    ['D. Madory, J. Snijders', '„The Scourge of Excessive AS-SETs” (2025): te grote AS-SETs en route leaks'],
     ['Operators', 'openbare onboardingdocumentatie van bekende scrubbingcentra: minimale prefixlengte, ROA, IRR in een RIR-database, LOA, tunnel']
   ],
   podstawaLink: 'Volledige bronnenlijst met links',

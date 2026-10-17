@@ -40,7 +40,7 @@ pl: {
   krok: {
     as: 'dane AS', prefiksy: 'ogłaszane prefiksy', roa: 'ROA i ASPA', irr: 'obiekty route (IRR)',
     autnum: 'aut-num i AS-SET', pdb: 'PeeringDB', abuse: 'kontakt abuse', sasiedzi: 'sąsiedzi BGP',
-    pref: (n, m) => `szczegóły prefiksów (${n}/${m})`, wlasciciel: (n, m) => `właściciele zasobów (${n}/${m})`, operator: 'ROA operatora'
+    wlaczenia: 'kto włącza Twój AS do AS-SET', pref: (n, m) => `szczegóły prefiksów (${n}/${m})`, wlasciciel: (n, m) => `właściciele zasobów (${n}/${m})`, operator: 'ROA operatora'
   },
   bladAs: 'Wpisz poprawny numer AS (1–4294967294).',
   bladSieci: (u) => `Nie udało się pobrać danych (${u}). Spróbuj ponownie za chwilę.`,
@@ -63,11 +63,13 @@ pl: {
   krokTyt: {
     dlugosc: 'Zastąp zbyt długie prefiksy', roa: 'Popraw ROA', roaOp: 'Dodaj ROA dla operatora scrubbing center',
     aspa: 'Uzupełnij ASPA', route: 'Utwórz obiekty route', usun: 'Usuń nieaktualne obiekty route',
-    loa: 'Przygotuj LOA', asset: 'Uporządkuj AS-SET', abuse: 'Ustaw kontakt abuse', pdb: 'Uzupełnij PeeringDB', inne: 'Pozostałe'
+    loa: 'Przygotuj LOA', asset: 'Uporządkuj AS-SET', wlaczenia: 'Sprawdź, kto włącza Twój AS do swoich AS-SET', abuse: 'Ustaw kontakt abuse', pdb: 'Uzupełnij PeeringDB', inne: 'Pozostałe'
   },
   ogolne: {
     dlugosc: ['Prefiksy dłuższe niż /24 (IPv6: /48) zastąp prefiksem /24 (/48), który je obejmuje, albo ogłaszaj je razem z takim prefiksem.'],
     loa: ['Zbierz listę prefiksów z tego kroku i właściciela każdego z nich (dane z bazy RIR).', 'Poproś właściciela przestrzeni — a jeśli prefiks ogłasza operator nadrzędny, także jego — o podpisanie LOA według wzoru poniżej.', 'Operatorzy zwykle przyjmują LOA w PDF, na papierze firmowym, z podpisem osoby upoważnionej.'],
+    asset: ['Zasada: w AS-SET umieszczaj tylko to, co ogłaszasz dalej w BGP, czyli siebie i swoich klientów. Nie dodawaj IXP ani peerów.', 'Zanim włączysz AS-SET klienta, sprawdź jego rozmiar; usuwaj klientów, którzy odeszli, i przeglądaj zbiór regularnie.'],
+    wlaczenia: ['Przejrzyj listę zbiorów z tego kroku. Właściciela znajdziesz w obiekcie as-set (mnt-by, admin-c) w bazie IRR.', 'Jeżeli zbiór należy do sieci, z którą nie masz relacji BGP, poproś o usunięcie Twojego AS. Gdy nie odpowiada, zgłoś to do operatora bazy IRR.', 'Opublikuj ASPA z listą swoich operatorów nadrzędnych — to ogranicza podszywanie się pod Twój AS przez cudze AS-SET.', 'Włącz stały monitoring nowych AS-SET, które odwołują się do Twojego AS.'],
     pdb: ['Zaloguj się do peeringdb.com i otwórz rekord swojej sieci (Network).', 'W polu „IRR as-set/route-set” wpisz swój AS-SET razem ze źródłem, np. RIPE::AS64496:AS-KLIENCI.', 'Zapisz i sprawdź, czy pole zgadza się z aut-num.'],
     inne: []
   },
@@ -111,7 +113,20 @@ pl: {
     upstream: { ok: (n) => `Liczba operatorów nadrzędnych widocznych w BGP: ${n}.`, zal: (n) => `Widoczny tylko ${n} operator nadrzędny. Przy jednym łączu atak wysyca je, zanim przekierowanie zacznie działać — warto mieć drugie łącze albo zgodę operatora na RTBH i BGP FlowSpec.` },
     aspa: { ok: (l) => `Obiekt ASPA istnieje (providerzy: ${l}).`, brakOp: (op) => `Obiekt ASPA nie zawiera AS${op}. Po przekierowaniu ścieżka przez scrubbing center będzie uznana za nieprawidłową przez sieci walidujące ASPA — dodaj AS${op} do listy providerów.`, info: 'Brak obiektu ASPA. Nie jest wymagany; jeżeli go dodasz, umieść na liście także AS operatora scrubbing center.' },
     opRoa: { ok: (op) => `ROA dla AS${op} obejmują każdy /24 (/48).`, blok: (op, n) => `Operator ogłasza ze swojego AS, a ROA dla AS${op} nie obejmuje części prefiksów /24 (/48) (liczba: ${n}). Sieci walidujące RPKI odrzucą te ogłoszenia.` },
-    nieaktualne: { zal: (l) => `Obiekty route z Twoim AS dla prefiksów, których nie ogłaszasz: ${l}. Usuń nieaktualne — bałagan w IRR utrudnia weryfikację u operatora.` }
+    nieaktualne: { zal: (l) => `Obiekty route z Twoim AS dla prefiksów, których nie ogłaszasz: ${l}. Usuń nieaktualne — bałagan w IRR utrudnia weryfikację u operatora.` },
+    higiena: {
+      rozmiarOk: (s, n, r) => `${s} po rozwinięciu obejmuje ${n} AS (klientów widocznych w BGP: ${r}). Rozmiar pasuje do sieci.`,
+      rozmiarSredni: (s, n, r) => `${s} po rozwinięciu obejmuje ${n} AS, a w BGP widać ${r} klientów. Sprawdź, czy wszystkie te AS ogłaszasz dalej.`,
+      rozmiarDuzy: (s, n, r) => `${s} po rozwinięciu obejmuje ${n} AS, a w BGP widać tylko ${r} klientów. Filtr zbudowany z takiego zbioru przepuści wyciek tras od klienta i ułatwia podszycie się pod cudze prefiksy — odchudź zbiór do swojego stożka klientów.`,
+      glebokosc: (s, d) => `${s} ma ${d} poziomów zagnieżdżeń. Rekurencja szybko wymyka się spod kontroli — ogranicz ją do zbiorów Twoich bezpośrednich klientów.`,
+      skladowe: (s, l) => `Największą część ${s} wnoszą: ${l}. Sprawdź rozmiar AS-SET tych klientów, zanim go włączysz.`,
+      ixp: (s, l) => `W ${s} są zbiory, które wyglądają na listy członków IXP albo peerów: ${l}. W zbiorze klientów nie umieszcza się IXP ani peerów — nie ogłaszasz ich dalej.`,
+      nieaktualni: (s, l) => `W ${s} są AS, których nie widać jako Twoich klientów w BGP: ${l}. Jeśli to klienci, którzy odeszli, usuń ich.`,
+      wlaczeniaObce: (k, l) => `Twój AS włączyły do swoich AS-SET (innych niż listy peerów i IXP) sieci, z którymi nie widać relacji BGP (${k}): ${l}. Tak wyglądał wstęp do próby przejęcia ruchu opisany na DKNOG15. Każde takie włączenie pozwala tej sieci ogłaszać Twoje prefiksy przez swoich operatorów nadrzędnych mimo filtrów IRR — sprawdź je i poproś o usunięcie.`,
+      wlaczeniaIxp: (k, l) => `Twój AS jest w zbiorach peerów albo członków IXP sieci, z którymi nie widać relacji BGP (${k}): ${l}. To zwykle dokumentacja peeringu — sprawdź, czy rzeczywiście masz z nimi sesję. Takie zbiory też można wykorzystać do obejścia filtrów.`,
+      wlaczeniaNieznane: (k, l) => `Twój AS jest w AS-SET o nazwach bez numeru właściciela (${k}): ${l}. Sprawdź w bazie IRR, kto je utrzymuje i czy to Twoi operatorzy lub IXP.`,
+      wlaczeniaOk: (k) => `Twój AS jest w ${k} cudzych AS-SET — wszystkie należą do Twoich sąsiadów BGP albo do Ciebie.`
+    }
   },
   // testy prefiksów
   p: {
@@ -153,6 +168,7 @@ pl: {
     ['Czas propagacji', 'Nowe ROA i obiekty route trafiają do filtrów od kilku godzin do 48 godzin. Przygotuj je przed atakiem, nie w jego trakcie.'],
     ['Ogłoszenie i wycofanie', 'Uzgodnij z operatorem, jak ogłosić /24 (prepend, community, wstrzymanie ogłoszenia do łącza tranzytowego) i jak bezpiecznie wycofać przekierowanie — najpierw ogłoś prefiks u siebie, potem wycofaj go u operatora.'],
     ['Pętle routingu', 'Jeżeli operator odsyła Ci bardziej szczegółowe prefiksy Twojej przestrzeni, odfiltruj je na sesji, żeby nie powstała pętla.'],
+    ['Filtrowanie klientów', 'Filtruj trasy od klientów według ich AS-SET i obiektów route, a przed przyjęciem zbioru sprawdź jego rozmiar. Jedyną zaporą przed wyciekiem tras od klienta jest właśnie ten filtr.'],
     ['Test na sucho', 'Przetestuj przekierowanie jednego /24 poza atakiem i sprawdź w looking glass, czy prefiks jest widoczny i RPKI-valid.'],
     ['RTBH', 'Do blokowania przez RTBH (prefiksy /32, community BLACKHOLE z RFC 7999) nie poszerzaj ROA — RFC 9319 §6 odradza to wprost. Przekierowanie do scrubbing center i RTBH to dwie osobne sprawy.']
   ],
@@ -167,7 +183,9 @@ pl: {
     ['ASPA', 'autoryzacja operatorów nadrzędnych (IETF SIDROPS)'],
     ['ripe-705', 'obowiązkowy kontakt abuse-c w bazie RIPE'],
     ['Dokumentacja RIR', 'RIPE NCC, ARIN, APNIC, AFRINIC, LACNIC: ROA, obiekty route, as-set, abuse, ASPA'],
-    ['MANRS', 'rejestracja w IRR i RPKI, aktualne kontakty'],
+    ['MANRS', 'rejestracja w IRR i RPKI, aktualne kontakty; AS-SET jako opis stożka klientów (moduł 2)'],
+    ['L. Jarlskov (Telia)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): cel AS-SET, rozmiar, kto Cię włącza'],
+    ['D. Madory, J. Snijders', '„The Scourge of Excessive AS-SETs” (2025): nadmiernie rozbudowane AS-SET i wycieki tras'],
     ['Operatorzy', 'publiczna dokumentacja wdrożeniowa znanych operatorów scrubbing center: minimalny prefiks, ROA, IRR w bazie RIR, LOA, tunel']
   ],
   podstawaLink: 'Pełna lista źródeł z odnośnikami',
@@ -210,7 +228,7 @@ en: {
   krok: {
     as: 'AS data', prefiksy: 'announced prefixes', roa: 'ROAs and ASPA', irr: 'route objects (IRR)',
     autnum: 'aut-num and AS-SET', pdb: 'PeeringDB', abuse: 'abuse contact', sasiedzi: 'BGP neighbours',
-    pref: (n, m) => `prefix details (${n}/${m})`, wlasciciel: (n, m) => `resource holders (${n}/${m})`, operator: 'operator ROAs'
+    wlaczenia: 'who includes your AS in AS-SETs', pref: (n, m) => `prefix details (${n}/${m})`, wlasciciel: (n, m) => `resource holders (${n}/${m})`, operator: 'operator ROAs'
   },
   bladAs: 'Enter a valid AS number (1–4294967294).',
   bladSieci: (u) => `Could not fetch data (${u}). Please try again shortly.`,
@@ -232,11 +250,13 @@ en: {
   krokTyt: {
     dlugosc: 'Replace prefixes that are too long', roa: 'Fix ROAs', roaOp: 'Add ROAs for the scrubbing centre',
     aspa: 'Complete ASPA', route: 'Create route objects', usun: 'Remove stale route objects',
-    loa: 'Prepare an LOA', asset: 'Tidy up the AS-SET', abuse: 'Set the abuse contact', pdb: 'Complete PeeringDB', inne: 'Other'
+    loa: 'Prepare an LOA', asset: 'Tidy up the AS-SET', wlaczenia: 'Check who includes your AS in their AS-SETs', abuse: 'Set the abuse contact', pdb: 'Complete PeeringDB', inne: 'Other'
   },
   ogolne: {
     dlugosc: ['Replace prefixes longer than /24 (IPv6: /48) with the covering /24 (/48), or announce them together with it.'],
     loa: ['List the prefixes from this step and the holder of each (RIR database data).', 'Ask the address holder — and the upstream, if it announces the prefix — to sign an LOA based on the template below.', 'Operators usually accept the LOA as a PDF on company letterhead, signed by an authorised person.'],
+    asset: ['Rule of thumb: put in your AS-SET only what you re-advertise in BGP — yourself and your customers. Do not add IXPs or peers.', 'Check the size of a customer\'s AS-SET before including it; remove customers who left and review the set regularly.'],
+    wlaczenia: ['Review the sets listed in this step. The owner is in the as-set object (mnt-by, admin-c) in the IRR.', 'If a set belongs to a network you have no BGP relationship with, ask for your AS to be removed. If there is no answer, report it to the IRR operator.', 'Publish an ASPA listing your upstreams — it limits spoofing of your AS through other networks\' AS-SETs.', 'Set up ongoing monitoring of new AS-SETs that reference your AS.'],
     pdb: ['Log in to peeringdb.com and open your network record.', 'In „IRR as-set/route-set”, enter your AS-SET with its source, e.g. RIPE::AS64496:AS-CUSTOMERS.', 'Save and check that it matches your aut-num.'],
     inne: []
   },
@@ -279,7 +299,20 @@ en: {
     upstream: { ok: (n) => `Upstreams visible in BGP: ${n}.`, zal: (n) => `Only ${n} upstream visible. With a single link the attack saturates it before diversion takes effect — consider a second link or upstream RTBH and BGP FlowSpec.` },
     aspa: { ok: (l) => `ASPA object exists (providers: ${l}).`, brakOp: (op) => `The ASPA object does not include AS${op}. After diversion the path through the scrubbing centre will be invalid for ASPA-validating networks — add AS${op} to the provider list.`, info: 'No ASPA object. It is not required; if you add one, include the scrubbing centre\'s AS as a provider.' },
     opRoa: { ok: (op) => `ROAs for AS${op} cover every /24 (/48).`, blok: (op, n) => `The operator announces from its own AS, but no ROA for AS${op} covers ${n} /24 (/48) prefixes. RPKI-validating networks will drop these announcements.` },
-    nieaktualne: { zal: (l) => `Route objects with your AS for prefixes you do not announce: ${l}. Remove stale ones — clutter in the IRR complicates verification.` }
+    nieaktualne: { zal: (l) => `Route objects with your AS for prefixes you do not announce: ${l}. Remove stale ones — clutter in the IRR complicates verification.` },
+    higiena: {
+      rozmiarOk: (s, n, r) => `${s} expands to ${n} ASes (customers visible in BGP: ${r}). The size fits the network.`,
+      rozmiarSredni: (s, n, r) => `${s} expands to ${n} ASes, while BGP shows ${r} customers. Check that you re-advertise all of them.`,
+      rozmiarDuzy: (s, n, r) => `${s} expands to ${n} ASes, while BGP shows only ${r} customers. A filter built from such a set lets a customer route leak through and makes it easier to spoof other networks' prefixes — trim it to your customer cone.`,
+      glebokosc: (s, d) => `${s} is nested ${d} levels deep. Recursion quickly gets out of hand — limit it to the sets of your direct customers.`,
+      skladowe: (s, l) => `Most of ${s} comes from: ${l}. Check the size of these customers' AS-SETs before including them.`,
+      ixp: (s, l) => `${s} contains sets that look like IXP member or peer lists: ${l}. A customer set should not include IXPs or peers — you do not re-advertise them.`,
+      nieaktualni: (s, l) => `${s} contains ASes not visible as your customers in BGP: ${l}. If they are customers who left, remove them.`,
+      wlaczeniaObce: (k, l) => `Networks with no visible BGP relationship to you have included your AS in their AS-SETs (other than peer or IXP lists) (${k}): ${l}. This is what the prelude to a hijack attempt described at DKNOG15 looked like. Each such inclusion lets that network announce your prefixes through its upstreams despite IRR filters — review them and ask for removal.`,
+      wlaczeniaIxp: (k, l) => `Your AS is in peer or IXP member sets of networks with no visible BGP relationship to you (${k}): ${l}. These usually document peering — check that you really have a session with them. Such sets can also be used to bypass filters.`,
+      wlaczeniaNieznane: (k, l) => `Your AS is in AS-SETs whose names carry no owner AS number (${k}): ${l}. Check in the IRR who maintains them and whether they are your providers or IXPs.`,
+      wlaczeniaOk: (k) => `Your AS is in ${k} other AS-SETs — all belong to your BGP neighbours or to you.`
+    }
   },
   p: {
     zaDlugi: (d) => `Prefix longer than /${d} — filtered on the internet (RFC 7454) and not accepted by scrubbing centres.`,
@@ -319,6 +352,7 @@ en: {
     ['Propagation time', 'New ROAs and route objects reach filters within a few hours to 48 hours. Prepare them before an attack, not during it.'],
     ['Announcement and withdrawal', 'Agree with the operator how /24s are announced (prepend, communities, suppressing the transit announcement) and how to withdraw safely — announce the prefix yourself first, then withdraw it at the operator.'],
     ['Routing loops', 'If the operator sends back more specific prefixes of your space, filter them on the session to avoid a loop.'],
+    ['Customer filtering', 'Filter customer routes by their AS-SET and route objects, and check the set\'s size before accepting it. That filter is the only barrier against a customer route leak.'],
     ['Dry run', 'Test diverting one /24 outside an attack and check in a looking glass that it is visible and RPKI-valid.'],
     ['RTBH', 'Do not widen ROAs for RTBH (/32 prefixes, BLACKHOLE community from RFC 7999) — RFC 9319 §6 advises against it. Diversion to a scrubbing centre and RTBH are separate matters.']
   ],
@@ -333,7 +367,9 @@ en: {
     ['ASPA', 'upstream authorisation (IETF SIDROPS)'],
     ['ripe-705', 'mandatory abuse-c in the RIPE Database'],
     ['RIR documentation', 'RIPE NCC, ARIN, APNIC, AFRINIC, LACNIC: ROAs, route objects, as-sets, abuse, ASPA'],
-    ['MANRS', 'IRR and RPKI registration, up-to-date contacts'],
+    ['MANRS', 'IRR and RPKI registration, up-to-date contacts; AS-SET as the customer cone (module 2)'],
+    ['L. Jarlskov (Telia)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): AS-SET purpose, size, who includes you'],
+    ['D. Madory, J. Snijders', '„The Scourge of Excessive AS-SETs” (2025): oversized AS-SETs and route leaks'],
     ['Operators', 'public onboarding documentation of well-known scrubbing centre operators: minimum prefix, ROA, IRR in a RIR database, LOA, tunnel']
   ],
   podstawaLink: 'Full list of sources with links',

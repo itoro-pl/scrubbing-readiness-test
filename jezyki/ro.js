@@ -33,7 +33,7 @@ window.NAPISY.ro = {
   krok: {
     as: 'date AS', prefiksy: 'prefixe anunțate', roa: 'ROA și ASPA', irr: 'obiecte route (IRR)',
     autnum: 'aut-num și AS-SET', pdb: 'PeeringDB', abuse: 'contact abuse', sasiedzi: 'vecini BGP',
-    pref: (n, m) => `detalii prefixe (${n}/${m})`, wlasciciel: (n, m) => `deținători de resurse (${n}/${m})`, operator: 'ROA ale operatorului'
+    wlaczenia: 'cine include AS-ul dumneavoastră în AS-SET', pref: (n, m) => `detalii prefixe (${n}/${m})`, wlasciciel: (n, m) => `deținători de resurse (${n}/${m})`, operator: 'ROA ale operatorului'
   },
   bladAs: 'Introduceți un număr AS valid (1–4294967294).',
   bladSieci: (u) => `Datele nu au putut fi preluate (${u}). Încercați din nou în scurt timp.`,
@@ -55,11 +55,13 @@ window.NAPISY.ro = {
   krokTyt: {
     dlugosc: 'Înlocuiți prefixele prea lungi', roa: 'Corectați ROA', roaOp: 'Adăugați ROA pentru centrul de scrubbing',
     aspa: 'Completați ASPA', route: 'Creați obiecte route', usun: 'Ștergeți obiectele route învechite',
-    loa: 'Pregătiți o LOA', asset: 'Puneți în ordine AS-SET', abuse: 'Setați contactul abuse', pdb: 'Completați PeeringDB', inne: 'Altele'
+    loa: 'Pregătiți o LOA', asset: 'Puneți în ordine AS-SET', wlaczenia: 'Verificați cine include AS-ul dumneavoastră în propriile AS-SET', abuse: 'Setați contactul abuse', pdb: 'Completați PeeringDB', inne: 'Altele'
   },
   ogolne: {
     dlugosc: ['Înlocuiți prefixele mai lungi de /24 (IPv6: /48) cu prefixul /24 (/48) care le acoperă sau anunțați-le împreună cu acesta.'],
     loa: ['Întocmiți lista prefixelor din acest pas și deținătorul fiecăruia (date din baza de date RIR).', 'Cereți deținătorului spațiului de adrese — și operatorului din amonte, dacă el anunță prefixul — să semneze o LOA pe baza modelului de mai jos.', 'Operatorii acceptă de regulă LOA ca PDF pe hârtie cu antetul firmei, semnată de o persoană autorizată.'],
+    asset: ['Regulă de bază: în AS-SET puneți doar ce anunțați mai departe în BGP — propria rețea și clienții dumneavoastră. Nu adăugați IXP-uri sau peeri.', 'Înainte de a include AS-SET-ul unui client, verificați-i dimensiunea; eliminați clienții care au plecat și revizuiți setul în mod regulat.'],
+    wlaczenia: ['Parcurgeți lista seturilor din acest pas. Deținătorul se găsește în obiectul as-set (mnt-by, admin-c) din baza de date IRR.', 'Dacă un set aparține unei rețele cu care nu aveți o relație BGP, cereți eliminarea AS-ului dumneavoastră. Dacă nu primiți răspuns, raportați situația operatorului bazei de date IRR.', 'Publicați un ASPA cu lista operatorilor dumneavoastră din amonte — limitează uzurparea AS-ului dumneavoastră prin AS-SET-urile altor rețele.', 'Configurați o monitorizare permanentă a noilor AS-SET care fac referire la AS-ul dumneavoastră.'],
     pdb: ['Autentificați-vă pe peeringdb.com și deschideți înregistrarea rețelei dumneavoastră (Network).', 'În câmpul „IRR as-set/route-set” introduceți AS-SET-ul împreună cu sursa, de ex. RIPE::AS64496:AS-CLIENTI.', 'Salvați și verificați că valoarea corespunde cu aut-num.'],
     inne: []
   },
@@ -102,7 +104,20 @@ window.NAPISY.ro = {
     upstream: { ok: (n) => `Operatori din amonte vizibili în BGP: ${n}.`, zal: (n) => `Este vizibil doar ${n} operator din amonte. Cu o singură legătură, atacul o saturează înainte ca redirecționarea să intre în funcțiune — luați în considerare o a doua legătură sau RTBH și BGP FlowSpec la operator.` },
     aspa: { ok: (l) => `Obiectul ASPA există (provideri: ${l}).`, brakOp: (op) => `Obiectul ASPA nu include AS${op}. După redirecționare, calea prin centrul de scrubbing va fi considerată invalidă de rețelele care validează ASPA — adăugați AS${op} în lista de provideri.`, info: 'Lipsește obiectul ASPA. Nu este obligatoriu; dacă îl creați, includeți în listă și AS-ul centrului de scrubbing.' },
     opRoa: { ok: (op) => `ROA pentru AS${op} acoperă fiecare /24 (/48).`, blok: (op, n) => `Operatorul anunță din propriul AS, dar ROA pentru AS${op} nu acoperă o parte din prefixele /24 (/48) (număr: ${n}). Rețelele care validează RPKI vor respinge aceste anunțuri.` },
-    nieaktualne: { zal: (l) => `Obiecte route cu AS-ul dumneavoastră pentru prefixe pe care nu le anunțați: ${l}. Ștergeți-le pe cele învechite — dezordinea din IRR îngreunează verificarea la operator.` }
+    nieaktualne: { zal: (l) => `Obiecte route cu AS-ul dumneavoastră pentru prefixe pe care nu le anunțați: ${l}. Ștergeți-le pe cele învechite — dezordinea din IRR îngreunează verificarea la operator.` },
+    higiena: {
+      rozmiarOk: (s, n, r) => `După expandare, ${s} cuprinde AS-uri în număr de ${n} (clienți vizibili în BGP: ${r}). Dimensiunea corespunde rețelei.`,
+      rozmiarSredni: (s, n, r) => `După expandare, ${s} cuprinde AS-uri în număr de ${n}, iar numărul de clienți vizibili în BGP este ${r}. Verificați dacă le anunțați mai departe pe toate.`,
+      rozmiarDuzy: (s, n, r) => `După expandare, ${s} cuprinde AS-uri în număr de ${n}, iar numărul de clienți vizibili în BGP este doar ${r}. Un filtru construit dintr-un astfel de set lasă să treacă un route leak de la un client și facilitează uzurparea prefixelor altor rețele — reduceți setul la conul dumneavoastră de clienți (customer cone).`,
+      glebokosc: (s, d) => `${s} are adâncimea de imbricare ${d}. Recursivitatea scapă repede de sub control — limitați-o la seturile clienților dumneavoastră direcți.`,
+      skladowe: (s, l) => `Cea mai mare parte din ${s} provine de la: ${l}. Verificați dimensiunea AS-SET-urilor acestor clienți înainte de a le include.`,
+      ixp: (s, l) => `${s} conține seturi care par liste de membri IXP sau de peeri: ${l}. Un set de clienți nu trebuie să includă IXP-uri sau peeri — nu îi anunțați mai departe.`,
+      nieaktualni: (s, l) => `${s} conține AS-uri care nu apar în BGP drept clienți ai dumneavoastră: ${l}. Dacă sunt clienți care au plecat, eliminați-i.`,
+      wlaczeniaObce: (k, l) => `Rețele fără o relație BGP vizibilă cu dumneavoastră au inclus AS-ul dumneavoastră în AS-SET-urile lor (altele decât liste de peeri sau IXP) (${k}): ${l}. Exact așa arăta preludiul tentativei de deturnare descrise la DKNOG15. Fiecare astfel de includere permite acelei rețele să anunțe prefixele dumneavoastră prin operatorii săi din amonte, în ciuda filtrelor IRR — verificați-le și cereți eliminarea.`,
+      wlaczeniaIxp: (k, l) => `AS-ul dumneavoastră se află în seturi de peeri sau de membri IXP ale unor rețele fără o relație BGP vizibilă cu dumneavoastră (${k}): ${l}. De regulă, acestea documentează peeringul — verificați dacă aveți într-adevăr o sesiune cu ele. Și astfel de seturi pot fi folosite pentru a ocoli filtrele.`,
+      wlaczeniaNieznane: (k, l) => `AS-ul dumneavoastră se află în AS-SET-uri ale căror nume nu conțin numărul AS al deținătorului (${k}): ${l}. Verificați în baza de date IRR cine le administrează și dacă sunt operatorii dumneavoastră sau IXP-uri.`,
+      wlaczeniaOk: (k) => `AS-ul dumneavoastră se află în AS-SET-uri ale altor rețele (număr: ${k}) — toate aparțin vecinilor dumneavoastră BGP sau chiar dumneavoastră.`
+    }
   },
   p: {
     zaDlugi: (d) => `Prefix mai lung de /${d} — filtrat pe internet (RFC 7454) și neacceptat de centrele de scrubbing.`,
@@ -142,6 +157,7 @@ window.NAPISY.ro = {
     ['Timp de propagare', 'ROA și obiectele route noi ajung în filtre în câteva ore până la 48 de ore. Pregătiți-le înainte de un atac, nu în timpul lui.'],
     ['Anunțare și retragere', 'Stabiliți cu operatorul cum se anunță prefixele /24 (prepend, community, suprimarea anunțului către tranzit) și cum se retrage în siguranță redirecționarea — mai întâi anunțați prefixul dumneavoastră, apoi retrageți-l la operator.'],
     ['Bucle de rutare', 'Dacă operatorul vă trimite înapoi prefixe mai specifice din spațiul dumneavoastră, filtrați-le pe sesiune pentru a evita o buclă.'],
+    ['Filtrarea clienților', 'Filtrați rutele clienților pe baza AS-SET-ului și a obiectelor route ale acestora și verificați dimensiunea setului înainte de a-l accepta. Acest filtru este singura barieră împotriva unui route leak de la un client.'],
     ['Test la rece', 'Testați redirecționarea unui /24 în afara unui atac și verificați într-un looking glass că prefixul este vizibil și RPKI-valid.'],
     ['RTBH', 'Nu lărgiți ROA pentru RTBH (prefixe /32, community BLACKHOLE din RFC 7999) — RFC 9319 §6 descurajează explicit acest lucru. Redirecționarea către un centru de scrubbing și RTBH sunt lucruri separate.']
   ],
@@ -156,7 +172,9 @@ window.NAPISY.ro = {
     ['ASPA', 'autorizarea operatorilor din amonte (IETF SIDROPS)'],
     ['ripe-705', 'contact abuse-c obligatoriu în baza de date RIPE'],
     ['Documentația RIR', 'RIPE NCC, ARIN, APNIC, AFRINIC, LACNIC: ROA, obiecte route, as-set, abuse, ASPA'],
-    ['MANRS', 'înregistrare în IRR și RPKI, contacte actualizate'],
+    ['MANRS', 'înregistrare în IRR și RPKI, contacte actualizate; AS-SET ca descriere a conului de clienți (modulul 2)'],
+    ['L. Jarlskov (Telia)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): scopul AS-SET, dimensiunea, cine vă include'],
+    ['D. Madory, J. Snijders', '„The Scourge of Excessive AS-SETs” (2025): AS-SET supradimensionate și route leaks'],
     ['Operatori', 'documentația publică de implementare a unor operatori cunoscuți de centre de scrubbing: prefix minim, ROA, IRR într-o bază de date RIR, LOA, tunel']
   ],
   podstawaLink: 'Lista completă a surselor, cu linkuri',

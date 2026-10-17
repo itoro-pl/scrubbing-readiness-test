@@ -329,10 +329,12 @@ async function analizuj(asn, opAsn, tryb, postep) {
     if (!/(^|:)AS-/.test(nazwa)) return;   // route-set (RS-…) to nie AS-SET
     if (!nazwy.has(nazwa) || m) nazwy.set(nazwa, m ? m[1] : (nazwy.get(nazwa) || null));
   });
+  const rozwiniecia = new Map();
   for (const [nazwa, zrodlo] of nazwy) {
     postep(N.krok.autnum);
     const ex = await pobierz(`https://irrexplorer.nlnog.net/api/sets/expand/${encodeURIComponent(nazwa)}`, { opcjonalne: true });
     if (ex === undefined) { bledy.push(N.krok.autnum); continue; }
+    if (ex && ex.length) rozwiniecia.set(nazwa, ex);
     const korzen = (ex || []).filter(x => x.depth === 1 && (!zrodlo || x.source === zrodlo));
     if (!korzen.length) { dodajAs('asset', 'popr', N.t.asset.brak(esc(nazwa))); continue; }
     const zr = [...new Set(korzen.map(x => x.source))];
@@ -344,6 +346,81 @@ async function analizuj(asn, opAsn, tryb, postep) {
     else dodajAs('assetHier', 'zal', N.t.assetHier.zal(esc(nazwa)));
   }
   if (!nazwy.size && lista.length) dodajAs('assetBrak', 'zal', N.t.asset.zadnego);
+
+  /* ── HIGIENA AS-SET ──────────────────────────────────────
+     Według: L. Jarlskov (Telia), „Securing your AS-set” (BalticNOG 2025)
+     i „Prelude to a BGP hijack?” (DKNOG15); D. Madory, J. Snijders,
+     „The Scourge of Excessive AS-SETs” (Kentik, 2025). Zasada: w AS-SET
+     tylko to, co ogłaszasz dalej w BGP (swój stożek klientów). */
+  const wszyscySasiedzi = ((sasiedzi && sasiedzi.data && sasiedzi.data.neighbours) || []);
+  const prawi = new Set(wszyscySasiedzi.filter(n => n.type === 'right').map(n => +n.asn));
+  const znani = new Set(wszyscySasiedzi.map(n => +n.asn));
+  const jestAsn = x => /^AS\d+$/i.test(String(x));
+  // Nazwa zbioru wygląda na listę członków IXP albo peerów (heurystyka po członach nazwy).
+  const SLOWA_IXP = new Set(['IX', 'IXP', 'PEER', 'PEERS', 'PEERING', 'PEERINGS', 'RS', 'MEMBERS', 'ROUTESERVER']);
+  const NIE_IXP = new Set(['MATRIX', 'RADIX', 'PHOENIX', 'UNIX', 'APPENDIX', 'PREFIX', 'SUFFIX', 'HELIX', 'FELIX', 'REMIX', 'NETFLIX', 'ONYX']);
+  const wygladaNaIxp = nazwa => String(nazwa).toUpperCase().split(/[:\-_.]/).some(t => SLOWA_IXP.has(t) || (/^[A-Z]{2,}IX$/.test(t) && !NIE_IXP.has(t)));
+  for (const [nazwa, ex] of rozwiniecia) {
+    const asny = new Set();
+    let glebokosc = 0;
+    const naDziecko = new Map();
+    for (const e of ex) {
+      glebokosc = Math.max(glebokosc, e.depth || 1);
+      const dziecko = (e.path || [])[1];
+      for (const m of (e.members || [])) if (jestAsn(m)) {
+        const k = String(m).toUpperCase();
+        asny.add(k);
+        if (dziecko) { if (!naDziecko.has(dziecko)) naDziecko.set(dziecko, new Set()); naDziecko.get(dziecko).add(k); }
+      }
+    }
+    const n = asny.size, r = prawi.size;
+    W.zbiory = W.zbiory || {};
+    W.zbiory[nazwa] = { asn: n, glebokosc, zbiorow: ex.length, klienciBgp: r };
+    // 1. rozmiar w porównaniu z klientami widocznymi w BGP
+    const limit = Math.max(100, 10 * (r + 1));
+    if (n > 1000 || n > limit) dodajAs('asetRozmiar', 'popr', N.t.higiena.rozmiarDuzy(esc(nazwa), n, r));
+    else if (n > Math.max(30, 3 * (r + 1))) dodajAs('asetRozmiar', 'zal', N.t.higiena.rozmiarSredni(esc(nazwa), n, r));
+    else dodajAs('asetRozmiar', 'ok', N.t.higiena.rozmiarOk(esc(nazwa), n, r));
+    // 2. głębokość zagnieżdżeń
+    if (glebokosc > 5) dodajAs('asetGlebokosc', 'zal', N.t.higiena.glebokosc(esc(nazwa), glebokosc));
+    // 3. największe składowe (jak czerwone pozycje w bgp.tools)
+    const duze = [...naDziecko].map(([d, s]) => [d, s.size]).filter(([, k]) => k >= 100 && k >= n * 0.3).sort((x, y) => y[1] - x[1]).slice(0, 5);
+    if (duze.length) dodajAs('asetSkladowe', 'popr', N.t.higiena.skladowe(esc(nazwa), esc(duze.map(([d, k]) => `${d} (${k} AS)`).join(', '))));
+    // 4. zbiory wyglądające na członków IXP albo peerów
+    const ixp = [...new Set(ex.filter(e => e.depth >= 2 && wygladaNaIxp(e.name)).map(e => e.name))];
+    if (ixp.length) dodajAs('asetIxp', 'zal', N.t.higiena.ixp(esc(nazwa), esc(ixp.slice(0, 8).join(', ') + (ixp.length > 8 ? ` (+${ixp.length - 8})` : ''))));
+    // 5. bezpośredni członkowie, których nie widać jako klientów w BGP
+    const korzen = ex.find(e => e.depth === 1);
+    const bezposredni = ((korzen && korzen.members) || []).filter(jestAsn).map(x => +String(x).slice(2)).filter(x => x !== asn);
+    if (sasiedzi && bezposredni.length) {
+      const niewidoczni = bezposredni.filter(x => !prawi.has(x));
+      if (niewidoczni.length) dodajAs('asetNieaktualni', 'zal', N.t.higiena.nieaktualni(esc(nazwa), esc(niewidoczni.slice(0, 12).map(x => 'AS' + x).join(', ') + (niewidoczni.length > 12 ? ` (+${niewidoczni.length - 12})` : ''))));
+    }
+  }
+
+  // 6. kto włącza Twój AS do swoich AS-SET (każde włączenie to potencjalne podszycie się pod Twój AS)
+  postep(N.krok.wlaczenia);
+  const mo = await pobierz(`https://irrexplorer.nlnog.net/api/sets/member-of/AS${asn}`, { opcjonalne: true });
+  if (mo && mo.setsPerIrr) {
+    const wlasne = new Set([...nazwy.keys()]);
+    const wpisy = [];
+    for (const [irr, lista2] of Object.entries(mo.setsPerIrr)) for (const s of lista2) {
+      if (wlasne.has(String(s).toUpperCase())) continue;
+      const m = String(s).match(/^AS(\d+):/i);
+      const wl = m ? +m[1] : null;
+      const status = wl === asn ? 'wlasny' : wl !== null && znani.has(wl) ? 'sasiad' : wygladaNaIxp(s) ? 'ixp' : wl !== null ? 'obcy' : 'nieznany';
+      wpisy.push({ zbior: s, irr, wlasciciel: wl, status });
+    }
+    W.wlaczenia = wpisy;
+    const obce = wpisy.filter(w => w.status === 'obcy');
+    const nieznane = wpisy.filter(w => w.status === 'nieznany');
+    const ixpPeer = wpisy.filter(w => w.status === 'ixp');
+    const pokaz = l => esc(l.slice(0, 10).map(w => `${w.zbior} (${w.irr})`).join(', ') + (l.length > 10 ? ` (+${l.length - 10})` : ''));
+    if (obce.length) dodajAs('wlaczeniaObce', 'popr', N.t.higiena.wlaczeniaObce(obce.length, pokaz(obce)));
+    if (ixpPeer.length) dodajAs('wlaczeniaIxp', 'zal', N.t.higiena.wlaczeniaIxp(ixpPeer.length, pokaz(ixpPeer)));
+    if (nieznane.length) dodajAs('wlaczeniaNieznane', 'zal', N.t.higiena.wlaczeniaNieznane(nieznane.length, pokaz(nieznane)));
+    if (!obce.length && !nieznane.length && !ixpPeer.length) dodajAs('wlaczenia', 'ok', N.t.higiena.wlaczeniaOk(wpisy.length));
+  }
 
   // operatorzy nadrzędni
   const lewi = ((sasiedzi && sasiedzi.data && sasiedzi.data.neighbours) || []).filter(n => n.type === 'left');
@@ -548,10 +625,10 @@ function podsumuj(W) {
   const obce = W.prefiksy.flatMap(p => (p.obce || []).map(x => `${p.prefiks} AS${x.asn} (${x.db})`));
   if (obce.length) dodaj('usun', W.prefiksy.some(p => (p.obce || []).some(x => x.inv)) ? 'popr' : 'zal', N.f.usun(obce.length), obce.slice(0, 12));
   if ((l = zPref('wlasciciel').concat(zPref('nadrzedny'))).length) dodaj('loa', 'popr', N.f.loa(lista([...new Set(l)])));
-  const TYP_AS = { aspaOp: 'aspa', abuse: 'abuse', autnum: 'asset', eksport: 'asset', asset: 'asset', assetZrodlo: 'asset', assetHier: 'asset', assetBrak: 'asset', pdb: 'pdb', pdbRoz: 'pdb', nieaktualne: 'usun', upstream: 'inne', opRoa: 'roaOp' };
+  const TYP_AS = { aspaOp: 'aspa', abuse: 'abuse', autnum: 'asset', eksport: 'asset', asset: 'asset', assetZrodlo: 'asset', assetHier: 'asset', assetBrak: 'asset', pdb: 'pdb', pdbRoz: 'pdb', nieaktualne: 'usun', upstream: 'inne', opRoa: 'roaOp', asetRozmiar: 'asset', asetGlebokosc: 'asset', asetSkladowe: 'asset', asetIxp: 'asset', asetNieaktualni: 'asset', wlaczeniaObce: 'wlaczenia', wlaczeniaIxp: 'wlaczenia', wlaczeniaNieznane: 'wlaczenia' };
   W.testyAs.filter(t => t.st === 'blok' || t.st === 'popr' || t.st === 'zal').filter(t => t.id !== 'opRoa').forEach(t => dodaj(TYP_AS[t.id] || 'inne', t.st, t.tekst));
 
-  const KOLEJNOSC = ['dlugosc', 'roa', 'roaOp', 'aspa', 'route', 'usun', 'loa', 'asset', 'abuse', 'pdb', 'inne'];
+  const KOLEJNOSC = ['dlugosc', 'roa', 'roaOp', 'aspa', 'route', 'usun', 'loa', 'asset', 'wlaczenia', 'abuse', 'pdb', 'inne'];
   W.kroki = KOLEJNOSC.map(typ => {
     const punkty = F.filter(f => f.typ === typ).sort((a, b) => WAGA[a.st] - WAGA[b.st]);
     if (!punkty.length) return null;
