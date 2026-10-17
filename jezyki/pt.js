@@ -6,6 +6,8 @@ window.NAPISY.pt = {
   pomin: 'Ir para o conteúdo',
   nadtytul: 'Ferramentas gratuitas',
   h1: 'Os seus prefixos estão prontos para ser desviados para um centro de scrubbing?',
+  zakresTytul: 'O que verificamos',
+  zakres: ['ROA e divisão em /24 (/48)', 'Objetos route nas bases dos RIR', 'LOA e titular do espaço', 'Higiene de AS-SET', 'Quem inclui o seu AS em AS-SET', 'ASPA', 'Contato abuse e PeeringDB', 'Instruções para 5 RIR'],
   heroH: 'Durante um ataque DDoS, o tráfego é desviado para um centro de scrubbing com o anúncio de prefixos <strong>/24</strong> (IPv6: <strong>/48</strong>) extraídos de blocos maiores. Se os seus ROA não permitirem isso, ou se faltar o objeto route na base de dados do RIR, o anúncio é descartado pelas redes que validam RPKI e pelos filtros do operador — exatamente quando a proteção é mais necessária. Esta ferramenta verifica isso com dados públicos e indica o que corrigir.',
   kartaTytul: 'Teste de prontidão de prefixos',
   wiodacy: 'Informe o número do seu AS. A ferramenta obtém os prefixos anunciados, os ROA, os objetos route, o AS-SET e os dados do titular dos recursos e, em seguida, compara-os com as recomendações dos RFC e com os requisitos habituais dos centros de scrubbing.',

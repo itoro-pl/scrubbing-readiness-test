@@ -120,6 +120,12 @@ img { max-width: 100%; display: block; }
 .gora-link:hover { color: #fff; text-decoration: underline; }
 .gora-kreska { color: rgba(255,255,255,.55); font-size: var(--f-pomocniczy); }
 .logo { width: 104px; height: auto; flex-shrink: 0; }
+.gora-tresc > a:first-child { flex-shrink: 0; }
+@media (max-width: 520px) {
+    .logo { width: 84px; }
+    .gora-kontakt > .gora-link, .gora-kontakt > .gora-kreska { display: none; }
+    .jezyki select { max-width: 7.5rem; }
+}
 .jezyki { display: inline-flex; }
 .jezyki select {
     font: inherit; font-size: var(--f-drobny); font-weight: 700; color: #fff; background: transparent; cursor: pointer;
@@ -131,11 +137,16 @@ img { max-width: 100%; display: block; }
 @media (max-width: 620px) { .gora-kontakt .poczta, .gora-kontakt .gora-kreska:last-of-type { display: none; } }
 
 /* ── NAGŁÓWEK ── */
-.hero { background: var(--noc); color: #fff; padding: 1.9rem 0 3.4rem; }
+.hero { background: var(--noc); color: #fff; padding: 1.9rem 0 3.6rem; }
 .nadtytul { font-size: var(--f-drobny); font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #e8879a; margin: 0 0 .75rem; }
 .hero h1 { font-size: clamp(1.9rem, 3.2vw, 2.9rem); line-height: 1.08; letter-spacing: -.024em; font-weight: 700; margin: 0 0 .85rem; text-wrap: balance; max-width: 32ch; }
 .hero-opis { margin: 1rem 0 0; max-width: 84ch; font-size: clamp(1rem, 1.2vw, 1.08rem); line-height: 1.62; color: rgba(255,255,255,.82); }
 .hero strong { color: #fff; font-weight: 600; }
+/* Zakres testu: tytuł narzędzia mówi o scrubbing center, a pasek pokazuje, że sprawdzamy więcej. */
+.zakres { margin: 1.2rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: .45rem .6rem; max-width: 100ch; }
+.zakres-tytul { font-size: var(--f-drobny); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #e8879a; margin-right: .2rem; }
+.zakres-lista { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.zakres-lista li { font-size: var(--f-pomocniczy); font-weight: 600; color: #fff; padding: .2rem .65rem; border-radius: 20px; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.06); }
 
 /* ── KARTY ── */
 .pas { display: grid; gap: 1.5rem; margin: -2.4rem 0 0; align-items: start; grid-template-columns: minmax(0, 1fr); }

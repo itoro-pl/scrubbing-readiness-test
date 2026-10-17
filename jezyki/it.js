@@ -6,6 +6,8 @@ window.NAPISY.it = {
   pomin: 'Vai al contenuto',
   nadtytul: 'Strumenti gratuiti',
   h1: 'I tuoi prefissi sono pronti per essere deviati verso uno scrubbing center?',
+  zakresTytul: 'Cosa controlliamo',
+  zakres: ['ROA e suddivisione in /24 (/48)', 'Oggetti route nei database dei RIR', 'LOA e titolare dello spazio', 'Igiene degli AS-SET', 'Chi include il tuo AS negli AS-SET', 'ASPA', 'Contatto abuse e PeeringDB', 'Istruzioni per 5 RIR'],
   heroH: 'Durante un attacco DDoS il traffico viene deviato verso uno scrubbing center annunciando prefissi <strong>/24</strong> (IPv6: <strong>/48</strong>) ricavati da blocchi più ampi. Se i tuoi ROA non lo consentono, o se nel database del RIR manca l’oggetto route, l’annuncio viene scartato dalle reti che validano RPKI e dai filtri dell’operatore — proprio quando la protezione serve di più. Lo strumento lo verifica sui dati pubblici e indica cosa correggere.',
   kartaTytul: 'Test di preparazione dei prefissi',
   wiodacy: 'Inserisci il numero del tuo AS. Lo strumento recupera i prefissi annunciati, i ROA, gli oggetti route, l’AS-SET e i dati del titolare delle risorse, poi li confronta con le raccomandazioni RFC e con i requisiti tipici degli scrubbing center.',

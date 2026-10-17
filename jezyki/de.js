@@ -6,6 +6,8 @@ window.NAPISY.de = {
   pomin: 'Zum Inhalt springen',
   nadtytul: 'Kostenlose Tools',
   h1: 'Sind Ihre Präfixe bereit für die Umleitung zum Scrubbing-Center?',
+  zakresTytul: 'Was wir prüfen',
+  zakres: ['ROAs und Aufteilung in /24 (/48)', 'Route-Objekte in RIR-Datenbanken', 'LOA und Inhaber des Adressraums', 'AS-SET-Hygiene', 'Wer Ihr AS in AS-SETs aufnimmt', 'ASPA', 'Abuse-Kontakt und PeeringDB', 'Anleitungen für 5 RIRs'],
   heroH: 'Bei einem DDoS-Angriff wird der Traffic zum Scrubbing-Center umgeleitet, indem <strong>/24</strong>-Präfixe (IPv6: <strong>/48</strong>) aus größeren Blöcken angekündigt werden. Erlauben Ihre ROAs das nicht oder fehlt das Route-Objekt in der RIR-Datenbank, wird die Ankündigung von RPKI-validierenden Netzen und von den Filtern des Betreibers verworfen — genau dann, wenn der Schutz am dringendsten gebraucht wird. Das Tool prüft dies anhand öffentlicher Daten und zeigt, was zu korrigieren ist.',
   kartaTytul: 'Präfix-Readiness-Test',
   wiodacy: 'Geben Sie Ihre AS-Nummer ein. Das Tool lädt angekündigte Präfixe, ROAs, Route-Objekte, AS-SET und Daten des Ressourceninhabers und prüft sie gegen RFC-Empfehlungen und typische Anforderungen von Scrubbing-Centern.',

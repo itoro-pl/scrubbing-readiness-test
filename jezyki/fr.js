@@ -6,6 +6,8 @@ window.NAPISY.fr = {
   pomin: 'Aller au contenu',
   nadtytul: 'Outils gratuits',
   h1: 'Vos préfixes sont-ils prêts à être redirigés vers un centre de nettoyage (scrubbing center) ?',
+  zakresTytul: 'Ce que nous vérifions',
+  zakres: ['ROA et découpage en /24 (/48)', 'Objets route dans les bases des RIR', 'LOA et titulaire de l’espace d’adresses', 'Hygiène des AS-SET', 'Qui inclut votre AS dans des AS-SET', 'ASPA', 'Contact abuse et PeeringDB', 'Instructions pour 5 RIR'],
   heroH: 'Pendant une attaque DDoS, le trafic est redirigé vers un scrubbing center par l’annonce de préfixes <strong>/24</strong> (IPv6 : <strong>/48</strong>) extraits de blocs plus larges. Si vos ROA ne le permettent pas, ou si l’objet route manque dans la base du RIR, l’annonce est rejetée par les réseaux qui valident RPKI et par les filtres de l’opérateur — précisément au moment où la protection compte le plus. Cet outil le vérifie sur des données publiques et indique ce qu’il faut corriger.',
   kartaTytul: 'Test de préparation des préfixes',
   wiodacy: 'Saisissez votre numéro d’AS. L’outil récupère les préfixes annoncés, les ROA, les objets route, l’AS-SET et les données du titulaire des ressources, puis les compare aux recommandations des RFC et aux exigences habituelles des scrubbing centers.',

@@ -6,6 +6,8 @@ window.NAPISY.ro = {
   pomin: 'Salt la conținut',
   nadtytul: 'Instrumente gratuite',
   h1: 'Sunt prefixele dumneavoastră pregătite pentru redirecționarea către un centru de scrubbing?',
+  zakresTytul: 'Ce verificăm',
+  zakres: ['ROA și împărțirea în /24 (/48)', 'Obiecte route în bazele RIR', 'LOA și titularul spațiului', 'Igiena AS-SET', 'Cine include AS-ul dumneavoastră în AS-SET', 'ASPA', 'Contact abuse și PeeringDB', 'Instrucțiuni pentru 5 RIR'],
   heroH: 'În timpul unui atac DDoS, traficul este redirecționat către un centru de scrubbing prin anunțarea unor prefixe <strong>/24</strong> (IPv6: <strong>/48</strong>) extrase din blocuri mai mari. Dacă ROA nu permit acest lucru sau obiectul route lipsește din baza de date RIR, anunțul este respins de rețelele care validează RPKI și de filtrele operatorului — exact atunci când protecția contează cel mai mult. Instrumentul verifică acest lucru pe baza datelor publice și vă spune ce trebuie corectat.',
   kartaTytul: 'Test de pregătire a prefixelor',
   wiodacy: 'Introduceți numărul AS-ului dumneavoastră. Instrumentul preia prefixele anunțate, ROA, obiectele route, AS-SET și datele deținătorului resurselor, apoi le verifică în raport cu recomandările RFC și cerințele uzuale ale centrelor de scrubbing.',

@@ -918,6 +918,7 @@ function wypelnij() {
   document.querySelectorAll('[data-nh]').forEach(e => { const v = N[e.dataset.nh]; if (typeof v === 'string') e.innerHTML = v; });
   document.querySelectorAll('[data-np]').forEach(e => { e.placeholder = N[e.dataset.np]; });
   const lp = $('#itoroPunkty'); if (lp) lp.innerHTML = N.itoroPunkty.map(x => `<li>${x}</li>`).join('');
+  const zk = $('#zakres'); if (zk) zk.innerHTML = (N.zakres || []).map(x => `<li>${esc(x)}</li>`).join('');
   const wj = $('#wyborJezyka');
   if (wj) {
     wj.innerHTML = Object.entries(JEZYKI).map(([k, v]) => `<option value="${k}"${k === jezyk ? ' selected' : ''} lang="${k}">${k.toUpperCase()} · ${v}</option>`).join('');

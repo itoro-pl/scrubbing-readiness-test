@@ -26,7 +26,7 @@ JS = r"""() => {
   const wychodzi = els.filter(e => { const cs = getComputedStyle(e);
     return e.scrollWidth > e.clientWidth + 2 && cs.overflowX === 'visible' && e.clientWidth > 0 && !['PRE','TABLE','TBODY','TR'].includes(e.tagName) && !e.closest('.tabela-owijka, .kod'); })
     .map(e => `${e.tagName}.${e.className} ${e.scrollWidth}>${e.clientWidth}`);
-  return { bok: document.documentElement.scrollWidth - innerWidth, nachodzi: wyn.slice(0, 5), wychodzi: wychodzi.slice(0, 5), lang: document.documentElement.lang, h1: document.querySelector('h1').textContent.slice(0, 40) };
+  return { logo: Math.round(document.querySelector('.logo').getBoundingClientRect().width), bok: document.documentElement.scrollWidth - innerWidth, nachodzi: wyn.slice(0, 5), wychodzi: wychodzi.slice(0, 5), lang: document.documentElement.lang, h1: document.querySelector('h1').textContent.slice(0, 40) };
 }"""
 problemy = 0
 with sync_playwright() as p:
@@ -41,7 +41,7 @@ with sync_playwright() as p:
             s.wait_for_selector('#wynik:not([hidden]) .werdykt', timeout=120_000)
             s.wait_for_timeout(500)
             r = s.evaluate(JS)
-            zle = r['bok'] > 0 or r['nachodzi'] or r['wychodzi'] or bledy or r['lang'] != j
+            zle = r['bok'] > 0 or r['logo'] < 60 or r['nachodzi'] or r['wychodzi'] or bledy or r['lang'] != j
             problemy += bool(zle)
             print(f"{j} {szer} {motyw}: {'PROBLEM' if zle else 'ok'} {r['h1']!r}" + (f" {r} {bledy}" if zle else ''))
             k.close()

@@ -6,6 +6,8 @@ window.NAPISY.nl = {
   pomin: 'Naar de inhoud',
   nadtytul: 'Gratis tools',
   h1: 'Zijn uw prefixen klaar om naar een scrubbingcentrum te worden omgeleid?',
+  zakresTytul: 'Wat we controleren',
+  zakres: ['ROA\'s en splitsing in /24 (/48)', 'Route-objecten in RIR-databases', 'LOA en houder van de adresruimte', 'AS-SET-hygiëne', 'Wie uw AS in AS-SETs opneemt', 'ASPA', 'Abuse-contact en PeeringDB', 'Instructies voor 5 RIR\'s'],
   heroH: 'Tijdens een DDoS-aanval wordt verkeer naar een scrubbingcentrum omgeleid door <strong>/24</strong>-prefixen (IPv6: <strong>/48</strong>) uit grotere blokken aan te kondigen. Staan uw ROA\'s dat niet toe, of ontbreekt het route-object in de RIR-database, dan wordt de aankondiging verworpen door RPKI-validerende netwerken en door de filters van de operator — precies wanneer bescherming het hardst nodig is. Deze tool controleert dit op basis van openbare gegevens en vertelt u wat u moet aanpassen.',
   kartaTytul: 'Prefix-gereedheidstest',
   wiodacy: 'Voer uw AS-nummer in. De tool haalt aangekondigde prefixen, ROA\'s, route-objecten, AS-SET en gegevens van de resourcehouder op en toetst ze aan RFC-aanbevelingen en gangbare eisen van scrubbingcentra.',

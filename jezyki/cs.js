@@ -6,6 +6,8 @@ window.NAPISY.cs = {
   pomin: 'Přejít na obsah',
   nadtytul: 'Bezplatné nástroje',
   h1: 'Jsou vaše prefixy připravené na přesměrování do scrubbing centra?',
+  zakresTytul: 'Co kontrolujeme',
+  zakres: ['ROA a rozdělení na /24 (/48)', 'Route objekty v databázích RIR', 'LOA a držitel adresního prostoru', 'Hygiena AS-SET', 'Kdo zahrnuje váš AS do AS-SET', 'ASPA', 'Abuse kontakt a PeeringDB', 'Návody pro 5 RIR'],
   heroH: 'Během DDoS útoku se provoz přesměrovává do scrubbing centra oznámením prefixů <strong>/24</strong> (IPv6: <strong>/48</strong>) vyčleněných z větších bloků. Pokud to ROA nedovolí nebo v databázi RIR chybí objekt route, oznámení zahodí sítě validující RPKI i filtry operátora — právě ve chvíli, kdy je ochrana nejvíce potřeba. Nástroj to ověří na veřejných datech a řekne vám, co opravit.',
   kartaTytul: 'Test připravenosti prefixů',
   wiodacy: 'Zadejte číslo svého AS. Nástroj stáhne oznamované prefixy, ROA, objekty route, AS-SET a údaje o držiteli zdrojů a ověří je podle doporučení RFC a běžných požadavků operátorů scrubbing center.',
