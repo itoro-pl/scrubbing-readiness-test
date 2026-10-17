@@ -19,7 +19,7 @@ window.NAPISY.cs = {
   sprawdz: 'Ověřit',
   sprawdzam: 'Ověřuji…',
   czas: 'Výsledek během několika sekund. Data stahuje váš prohlížeč z veřejných služeb (mimo jiné z databáze RIPE, registrů IRR a PeeringDB).',
-  wersja: 'Verze 1.0.0 · 15. října 2026',
+  wersja: 'Verze 1.1.0 · 17. října 2026',
   itoroNad: 'Nástroje poskytuje ITORO',
   itoroH2: 'Zvyšujeme bezpečnost vaší sítě',
   itoroP1: 'Nasazujeme a provozujeme systémy ochrany před DDoS útoky, především v sítích telekomunikačních operátorů a v datových centrech.',
@@ -33,7 +33,7 @@ window.NAPISY.cs = {
   krok: {
     as: 'data AS', prefiksy: 'oznamované prefixy', roa: 'ROA a ASPA', irr: 'objekty route (IRR)',
     autnum: 'aut-num a AS-SET', pdb: 'PeeringDB', abuse: 'abuse kontakt', sasiedzi: 'BGP sousedé',
-    wlaczenia: 'kdo zahrnuje váš AS do AS-SET', pref: (n, m) => `podrobnosti prefixů (${n}/${m})`, wlasciciel: (n, m) => `držitelé zdrojů (${n}/${m})`, operator: 'ROA operátora'
+    listy: 'seznamy prefixů (bgpq4)', wlaczenia: 'kdo zahrnuje váš AS do AS-SET', pref: (n, m) => `podrobnosti prefixů (${n}/${m})`, wlasciciel: (n, m) => `držitelé zdrojů (${n}/${m})`, operator: 'ROA operátora'
   },
   bladAs: 'Zadejte platné číslo AS (1–4294967294).',
   bladSieci: (u) => `Data se nepodařilo stáhnout (${u}). Zkuste to prosím za chvíli znovu.`,
@@ -81,6 +81,10 @@ window.NAPISY.cs = {
   sekcjaPrefiksy: 'Prefixy',
   sekcjaObiekty: 'Objekty připravené ke vložení',
   obiektyOpis: 'Návrhy na základě výsledku. Před vytvořením je zkontrolujte — maintainera (mnt-by) jsme převzali z existujících objektů.',
+  sekcjaListy: 'Seznamy prefixů (bgpq4, lokální verze)',
+  listyOpis: 'Vygenerované na vašem počítači nástrojem bgpq4 z vašich AS-SET. Přibližně takový filtr si z nich sestaví operátor.',
+  pobierzListe: 'Stáhnout celý seznam (.txt)',
+  listaObcieta: (n, m) => `Zobrazeno řádků: ${n} z ${m} — celý seznam je v souboru ke stažení.`,
   sekcjaReczne: 'Co nelze ověřit zvenčí',
   sekcjaPodstawa: 'Z čeho testy vycházejí',
   kolPrefiks: 'Prefix', kolRpki: 'RPKI', kolPodzial: 'Rozdělení na /24 (/48)', kolIrr: 'Objekt route', kolWlasciciel: 'Držitel', kolUwagi: 'Poznámky',
@@ -116,7 +120,10 @@ window.NAPISY.cs = {
       wlaczeniaObce: (k, l) => `Váš AS zahrnuly do svých AS-SET (jiných než seznamy peerů a IXP) sítě, se kterými není vidět vztah BGP (${k}): ${l}. Přesně tak vypadala předehra k pokusu o únos prefixů popsanému na DKNOG15. Každé takové zahrnutí umožňuje dané síti oznamovat vaše prefixy přes své nadřazené operátory navzdory filtrům IRR — prověřte je a požádejte o odebrání.`,
       wlaczeniaIxp: (k, l) => `Váš AS je v sadách peerů nebo členů IXP sítí, se kterými není vidět vztah BGP (${k}): ${l}. Obvykle jde o dokumentaci peeringu — ověřte, zda s nimi opravdu máte session. I takové sady lze zneužít k obejití filtrů.`,
       wlaczeniaNieznane: (k, l) => `Váš AS je v AS-SET s názvy bez čísla AS vlastníka (${k}): ${l}. V databázi IRR ověřte, kdo je spravuje a zda jde o vaše operátory nebo IXP.`,
-      wlaczeniaOk: (k) => `Váš AS je v cizích AS-SET (počet: ${k}) — všechny patří vašim BGP sousedům nebo vám.`
+      wlaczeniaOk: (k) => `Váš AS je v cizích AS-SET (počet: ${k}) — všechny patří vašim BGP sousedům nebo vám.`,
+      prefiksy: (s, a, b) => `${s}: prefixy podle bgpq4 — IPv4: ${a}, IPv6: ${b}.`,
+      lokalnie: 'Počet prefixů v AS-SET a hotové seznamy prefixů pro filtry (bgpq4) ukazuje verze ke stažení, spuštěná na vašem počítači.',
+      bezBgpq4: 'Nástroj běží lokálně, ale bez bgpq4, takže seznamy prefixů chybí. Nainstalujte bgpq4 (Linux: apt install bgpq4, macOS: brew install bgpq4) nebo spusťte verzi v Dockeru.'
     }
   },
   p: {

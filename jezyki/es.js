@@ -19,7 +19,7 @@ window.NAPISY.es = {
   sprawdz: 'Verificar',
   sprawdzam: 'Verificando…',
   czas: 'Resultados en unos segundos. Su navegador obtiene los datos de servicios públicos (entre ellos la base de datos de RIPE, los registros IRR y PeeringDB).',
-  wersja: 'Versión 1.0.0 · 15 de octubre de 2026',
+  wersja: 'Versión 1.1.0 · 17 de octubre de 2026',
   itoroNad: 'Herramientas ofrecidas por ITORO',
   itoroH2: 'Mejoramos la seguridad de su red',
   itoroP1: 'Implementamos y operamos sistemas de protección contra DDoS, principalmente en redes de operadores de telecomunicaciones y en centros de datos.',
@@ -33,7 +33,7 @@ window.NAPISY.es = {
   krok: {
     as: 'datos del AS', prefiksy: 'prefijos anunciados', roa: 'ROA y ASPA', irr: 'objetos route (IRR)',
     autnum: 'aut-num y AS-SET', pdb: 'PeeringDB', abuse: 'contacto de abuso', sasiedzi: 'vecinos BGP',
-    wlaczenia: 'quién incluye su AS en AS-SET', pref: (n, m) => `detalles de prefijos (${n}/${m})`, wlasciciel: (n, m) => `titulares de recursos (${n}/${m})`, operator: 'ROA del operador'
+    listy: 'listas de prefijos (bgpq4)', wlaczenia: 'quién incluye su AS en AS-SET', pref: (n, m) => `detalles de prefijos (${n}/${m})`, wlasciciel: (n, m) => `titulares de recursos (${n}/${m})`, operator: 'ROA del operador'
   },
   bladAs: 'Ingrese un número de AS válido (1–4294967294).',
   bladSieci: (u) => `No se pudieron obtener los datos (${u}). Inténtelo de nuevo en unos momentos.`,
@@ -81,6 +81,10 @@ window.NAPISY.es = {
   sekcjaPrefiksy: 'Prefijos',
   sekcjaObiekty: 'Objetos listos para pegar',
   obiektyOpis: 'Sugerencias basadas en el resultado. Revíselas antes de crearlas: el maintainer (mnt-by) se copió de los objetos existentes.',
+  sekcjaListy: 'Listas de prefijos (bgpq4, versión local)',
+  listyOpis: 'Generadas en su equipo por bgpq4 a partir de sus AS-SET. Es, aproximadamente, el filtro que un operador construirá con ellos.',
+  pobierzListe: 'Descargar la lista completa (.txt)',
+  listaObcieta: (n, m) => `Se muestran ${n} de ${m} líneas; la lista completa está en el archivo.`,
   sekcjaReczne: 'Lo que no se puede verificar desde fuera',
   sekcjaPodstawa: 'En qué se basan las pruebas',
   kolPrefiks: 'Prefijo', kolRpki: 'RPKI', kolPodzial: 'División en /24 (/48)', kolIrr: 'Objeto route', kolWlasciciel: 'Titular', kolUwagi: 'Observaciones',
@@ -116,7 +120,10 @@ window.NAPISY.es = {
       wlaczeniaObce: (k, l) => `Redes sin relación BGP visible con usted han incluido su AS en sus AS-SET (aparte de listas de peers o de IXP) (${k}): ${l}. Así fue el preludio del intento de secuestro (hijack) descrito en DKNOG15. Cada inclusión de este tipo permite a esa red anunciar sus prefijos a través de sus proveedores upstream pese a los filtros IRR; revíselas y solicite su eliminación.`,
       wlaczeniaIxp: (k, l) => `Su AS figura en conjuntos de peers o de miembros de IXP de redes sin relación BGP visible con usted (${k}): ${l}. Suelen documentar peering; verifique que realmente tiene una sesión con ellas. Estos conjuntos también pueden usarse para eludir filtros.`,
       wlaczeniaNieznane: (k, l) => `Su AS figura en AS-SET cuyos nombres no incluyen el número de AS del titular (${k}): ${l}. Verifique en el IRR quién los mantiene y si son sus proveedores o IXP.`,
-      wlaczeniaOk: (k) => `Su AS figura en ${k} AS-SET ajenos; todos pertenecen a sus vecinos BGP o a usted.`
+      wlaczeniaOk: (k) => `Su AS figura en ${k} AS-SET ajenos; todos pertenecen a sus vecinos BGP o a usted.`,
+      prefiksy: (s, a, b) => `${s}: prefijos según bgpq4; IPv4: ${a}, IPv6: ${b}.`,
+      lokalnie: 'El número de prefijos de su AS-SET y las listas de prefijos listas para filtros (bgpq4) se muestran en la versión descargable, que se ejecuta en su equipo.',
+      bezBgpq4: 'La herramienta se ejecuta en local, pero sin bgpq4, así que no hay listas de prefijos. Instale bgpq4 (Linux: apt install bgpq4, macOS: brew install bgpq4) o use la versión Docker.'
     }
   },
   p: {

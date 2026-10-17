@@ -1,6 +1,6 @@
 # Test gotowości prefiksów do scrubbing center
 
-![Wersja 1.0.0](https://img.shields.io/badge/wersja-1.0.0-B72343)
+![Wersja 1.1.0](https://img.shields.io/badge/wersja-1.1.0-B72343)
 ![5 RIR](https://img.shields.io/badge/RIR-RIPE%20%C2%B7%20ARIN%20%C2%B7%20APNIC%20%C2%B7%20AFRINIC%20%C2%B7%20LACNIC-1a56db)
 ![10 języków](https://img.shields.io/badge/j%C4%99zyki-10-1a56db)
 ![Bez serwera](https://img.shields.io/badge/serwer-brak-11603b)
@@ -79,13 +79,51 @@ Podstawę każdego testu (RFC, dokumenty RIPE i RIR, dokumentację operatorów) 
 
 Polski, angielski, niemiecki, francuski, hiszpański, portugalski, włoski, niderlandzki, czeski i rumuński. Strona wybiera język przeglądarki i ma przełącznik, a parametr `?jezyk=<kod>` wymusza wybrany język. Polski i angielski są wbudowane (`napisy.js`, `rir.js`); pozostałe języki ładują się z `jezyki/<kod>.js` dopiero wtedy, gdy są potrzebne.
 
-## Uruchomienie
+## Uruchomienie na własnym komputerze
 
-Otwórz `index.html` przez dowolny serwer WWW. Strona otwarta jako `file://` nie wszędzie może odpytywać API. Na przykład:
+Z narzędzia można korzystać online pod adresem **https://itoro.com.pl/narzedzia/scrubbing/** albo pobrać je i uruchomić u siebie. Wersja pobrana robi wszystko to, co wersja online. Gdy masz zainstalowany **bgpq4**, dochodzą **listy prefiksów** budowane z Twoich AS-SET: liczba prefiksów, gotowe `prefix-list` dla Junos i zwykłe listy do pobrania. Listy prefiksów są tylko w wersji lokalnej. bgpq4 łączy się bezpośrednio z serwerami IRR, a strona w przeglądarce tego nie potrafi.
+
+### 1. Pobranie
+
+- **ZIP:** [pobierz aktualną wersję](https://github.com/itoro-pl/scrubbing-readiness-test/archive/refs/heads/main.zip). To to samo co przycisk **Code → Download ZIP** na stronie repozytorium. Numerowane wersje są na stronie [Releases](https://github.com/itoro-pl/scrubbing-readiness-test/releases). Rozpakuj w dowolnym miejscu.
+- **git:** `git clone https://github.com/itoro-pl/scrubbing-readiness-test.git`
+
+### 2. Wybór sposobu uruchomienia
+
+| Sposób | Czego potrzebujesz | Listy prefiksów (bgpq4) |
+|---|---|---|
+| **A. Windows**: dwuklik na `start.bat` | [Python 3.8+](https://www.python.org/downloads/) (przy instalacji zaznacz *Add python.exe to PATH*) | nie; jeśli ich potrzebujesz, wybierz sposób C |
+| **B. Linux / macOS**: `./start.sh` | Python 3 (zwykle już jest) i `bgpq4` (Debian/Ubuntu: `sudo apt install bgpq4`, macOS: `brew install bgpq4`) | tak, po zainstalowaniu bgpq4 |
+| **C. Docker** (Windows, Linux, macOS) | [Docker Desktop](https://www.docker.com/products/docker-desktop/) na Windows i macOS albo Docker Engine na Linuksie | tak, bgpq4 jest w obrazie |
+
+**Czy potrzebuję Dockera na Windowsie?** Tylko wtedy, gdy chcesz mieć listy prefiksów na Windowsie. Do całej reszty wystarczą `start.bat` i Python. Można też zainstalować bgpq4 w WSL i uruchomić tam `./start.sh`.
+
+### 3. Uruchomienie
+
+**A, Windows:** dwuklik na `start.bat`. Przeglądarka otworzy `http://127.0.0.1:8765/`. Żeby zatrzymać narzędzie, zamknij okno albo naciśnij Ctrl+C.
+
+**B, Linux / macOS:**
 
 ```bash
-python -m http.server 8000
+./start.sh
 ```
+
+**C, Docker**, w rozpakowanym katalogu:
+
+```bash
+docker compose up --build
+```
+
+a potem otwórz `http://127.0.0.1:8765/`. Bez Compose:
+
+```bash
+docker build -t itoro-scrubbing .
+docker run --rm -p 127.0.0.1:8765:8765 itoro-scrubbing
+```
+
+Opcje lokalnego serwera: `start.bat --port 9000`, `./start.sh --port 9000` oraz `--bez-przegladarki` (bez otwierania przeglądarki). Serwer nasłuchuje tylko na `127.0.0.1`, a przykład dla Dockera też wystawia port wyłącznie na `127.0.0.1`.
+
+Lokalny serwer (`serwer.py`, tylko biblioteka standardowa Pythona) serwuje pliki i udostępnia dwa punkty używane wyłącznie przez stronę otwartą lokalnie: `/api/status` i `/api/prefiksy?zbior=<AS-SET>&ip=4|6[&zrodlo=<IRR>]`, który uruchamia `bgpq4 -j`. Dane wejściowe są sprawdzane, a bgpq4 jest wywoływany bez powłoki.
 
 Język wybiera się parametrem `?jezyk=pl`, `en`, `de`, `fr`, `es`, `pt`, `it`, `nl`, `cs` albo `ro` (domyślnie język przeglądarki). Wynik od razu: `?as=64496`, opcjonalnie z `&op=<AS operatora>&tryb=operator`.
 

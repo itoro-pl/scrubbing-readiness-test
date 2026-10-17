@@ -1,6 +1,6 @@
 # Scrubbing centre prefix readiness test
 
-![Version 1.0.0](https://img.shields.io/badge/version-1.0.0-B72343)
+![Version 1.1.0](https://img.shields.io/badge/version-1.1.0-B72343)
 ![5 RIRs](https://img.shields.io/badge/RIRs-RIPE%20%C2%B7%20ARIN%20%C2%B7%20APNIC%20%C2%B7%20AFRINIC%20%C2%B7%20LACNIC-1a56db)
 ![10 languages](https://img.shields.io/badge/languages-10-1a56db)
 ![No backend](https://img.shields.io/badge/backend-none-11603b)
@@ -89,14 +89,68 @@ and Romanian. The page picks the browser language and offers a switcher;
 `?jezyk=<code>` forces one. Polish and English are built in (`napisy.js`,
 `rir.js`); the other languages load on demand from `jezyki/<code>.js`.
 
-## Running
+## Running it yourself
 
-Open `index.html` through any web server (a `file://` page cannot call the
-APIs from every browser). For example:
+You can use the tool online at **https://itoro.com.pl/narzedzia/scrubbing/**
+or download it and run it on your own computer. The downloaded version does
+everything the online one does and, with **bgpq4** installed, adds **prefix
+lists** generated from your AS-SETs (prefix counts, Junos `prefix-list`,
+plain lists to download). Prefix lists exist only in the local version: they
+need bgpq4, which talks to IRR servers directly, and a web page cannot do that
+from your browser.
+
+### 1. Download
+
+- **ZIP:** [download the current version](https://github.com/itoro-pl/scrubbing-readiness-test/archive/refs/heads/main.zip)
+  (the same as **Code → Download ZIP** on the repository page). Numbered
+  versions are on the [Releases](https://github.com/itoro-pl/scrubbing-readiness-test/releases)
+  page. Unpack it anywhere.
+- **git:** `git clone https://github.com/itoro-pl/scrubbing-readiness-test.git`
+
+### 2. Choose how to run it
+
+| Option | You need | Prefix lists (bgpq4) |
+|---|---|---|
+| **A. Windows** — double-click `start.bat` | [Python 3.8+](https://www.python.org/downloads/) (tick *Add python.exe to PATH* during installation) | no — use option C if you want them |
+| **B. Linux / macOS** — run `./start.sh` | Python 3 (usually already installed) + `bgpq4` (Debian/Ubuntu: `sudo apt install bgpq4`, macOS: `brew install bgpq4`) | yes, once bgpq4 is installed |
+| **C. Docker** (Windows, Linux, macOS) | [Docker Desktop](https://www.docker.com/products/docker-desktop/) on Windows/macOS, or Docker Engine on Linux | yes, bgpq4 is inside the image |
+
+**Do I need Docker for Windows?** Only if you want prefix lists on Windows.
+For everything else `start.bat` and Python are enough. (Alternatively, install
+bgpq4 in WSL and run `./start.sh` there.)
+
+### 3. Start
+
+**A — Windows:** double-click `start.bat`. The browser opens at
+`http://127.0.0.1:8765/`. Close the window (or press Ctrl+C) to stop.
+
+**B — Linux / macOS:**
 
 ```bash
-python -m http.server 8000
+./start.sh
 ```
+
+**C — Docker**, in the unpacked folder:
+
+```bash
+docker compose up --build
+```
+
+then open `http://127.0.0.1:8765/`. Without Compose:
+
+```bash
+docker build -t itoro-scrubbing .
+docker run --rm -p 127.0.0.1:8765:8765 itoro-scrubbing
+```
+
+Options of the local server: `start.bat --port 9000`, `./start.sh --port 9000`,
+`--bez-przegladarki` (do not open the browser). The server listens only on
+`127.0.0.1`; the Docker example publishes the port on `127.0.0.1` too.
+
+The local server (`serwer.py`, Python standard library only) serves the files
+and two endpoints used only by the local page: `/api/status` and
+`/api/prefiksy?zbior=<AS-SET>&ip=4|6[&zrodlo=<IRR>]`, which run `bgpq4 -j`.
+Input is validated and bgpq4 is called without a shell.
 
 Language: `?jezyk=pl`, `en`, `de`, `fr`, `es`, `pt`, `it`, `nl`, `cs`, `ro` (default: browser language). Direct
 result: `?as=64496`, optionally `&op=<scrubbing AS>&tryb=operator`.
@@ -125,6 +179,8 @@ Content-Security-Policy, allow in `connect-src`:
 | `rir.js` | step-by-step instructions for RIPE NCC, ARIN, APNIC, AFRINIC, LACNIC (PL and EN) |
 | `jezyki/` | DE, FR, ES, PT, IT, NL, CS, RO — interface and RIR instructions |
 | `zrzuty/` | screenshots used in this README |
+| `serwer.py`, `start.bat`, `start.sh` | local server (Python stdlib) with the optional bgpq4 endpoint; one-click start |
+| `Dockerfile`, `docker-compose.yml` | image with Python and bgpq4 |
 | `skrypty/` | QA: `node skrypty/sprawdz-jezyki.js .` (translation structure), `python skrypty/sprawdz-uklad.py <url> <AS>` (layout in all languages), `python skrypty/zrzuty.py <url> <AS> zrzuty pl en` (screenshots; Playwright) |
 | `style.css` | light and dark theme, WCAG 2.1 AA contrast |
 | `SOURCES.md`, `ZRODLA.md` | sources of the tests (EN, PL) |

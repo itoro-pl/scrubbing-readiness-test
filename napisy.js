@@ -25,7 +25,7 @@ pl: {
   sprawdz: 'Sprawdź',
   sprawdzam: 'Sprawdzam…',
   czas: 'Wynik w kilkanaście sekund. Dane pobiera Twoja przeglądarka z publicznych serwisów (m.in. z bazy RIPE, rejestrów IRR i PeeringDB).',
-  wersja: 'Wersja 1.0.0 · 15 października 2026',
+  wersja: 'Wersja 1.1.0 · 17 października 2026',
   itoroNad: 'Narzędzia udostępnia ITORO',
   itoroH2: 'Poprawiamy bezpieczeństwo Twojej sieci',
   itoroP1: 'Wdrażamy i utrzymujemy systemy ochrony przed atakami DDoS, głównie w sieciach operatorów telekomunikacyjnych i w centrach danych.',
@@ -40,7 +40,7 @@ pl: {
   krok: {
     as: 'dane AS', prefiksy: 'ogłaszane prefiksy', roa: 'ROA i ASPA', irr: 'obiekty route (IRR)',
     autnum: 'aut-num i AS-SET', pdb: 'PeeringDB', abuse: 'kontakt abuse', sasiedzi: 'sąsiedzi BGP',
-    wlaczenia: 'kto włącza Twój AS do AS-SET', pref: (n, m) => `szczegóły prefiksów (${n}/${m})`, wlasciciel: (n, m) => `właściciele zasobów (${n}/${m})`, operator: 'ROA operatora'
+    listy: 'listy prefiksów (bgpq4)', wlaczenia: 'kto włącza Twój AS do AS-SET', pref: (n, m) => `szczegóły prefiksów (${n}/${m})`, wlasciciel: (n, m) => `właściciele zasobów (${n}/${m})`, operator: 'ROA operatora'
   },
   bladAs: 'Wpisz poprawny numer AS (1–4294967294).',
   bladSieci: (u) => `Nie udało się pobrać danych (${u}). Spróbuj ponownie za chwilę.`,
@@ -89,6 +89,10 @@ pl: {
   sekcjaPrefiksy: 'Prefiksy',
   sekcjaObiekty: 'Gotowe obiekty do wklejenia',
   obiektyOpis: 'Propozycje na podstawie wyniku. Sprawdź je przed utworzeniem — maintainera (mnt-by) przepisaliśmy z istniejących obiektów.',
+  sekcjaListy: 'Listy prefiksów (bgpq4, wersja lokalna)',
+  listyOpis: 'Wygenerowane na Twoim komputerze przez bgpq4 z Twoich AS-SET. Tak mniej więcej wygląda filtr, który zbuduje z nich operator.',
+  pobierzListe: 'Pobierz pełną listę (.txt)',
+  listaObcieta: (n, m) => `Pokazano ${n} z ${m} wierszy — całość jest w pliku do pobrania.`,
   sekcjaReczne: 'Czego nie da się sprawdzić z zewnątrz',
   sekcjaPodstawa: 'Na czym opieramy testy',
   kolPrefiks: 'Prefiks', kolRpki: 'RPKI', kolPodzial: 'Podział na /24 (/48)', kolIrr: 'Obiekt route', kolWlasciciel: 'Właściciel', kolUwagi: 'Uwagi',
@@ -125,7 +129,10 @@ pl: {
       wlaczeniaObce: (k, l) => `Twój AS włączyły do swoich AS-SET (innych niż listy peerów i IXP) sieci, z którymi nie widać relacji BGP (${k}): ${l}. Tak wyglądał wstęp do próby przejęcia ruchu opisany na DKNOG15. Każde takie włączenie pozwala tej sieci ogłaszać Twoje prefiksy przez swoich operatorów nadrzędnych mimo filtrów IRR — sprawdź je i poproś o usunięcie.`,
       wlaczeniaIxp: (k, l) => `Twój AS jest w zbiorach peerów albo członków IXP sieci, z którymi nie widać relacji BGP (${k}): ${l}. To zwykle dokumentacja peeringu — sprawdź, czy rzeczywiście masz z nimi sesję. Takie zbiory też można wykorzystać do obejścia filtrów.`,
       wlaczeniaNieznane: (k, l) => `Twój AS jest w AS-SET o nazwach bez numeru właściciela (${k}): ${l}. Sprawdź w bazie IRR, kto je utrzymuje i czy to Twoi operatorzy lub IXP.`,
-      wlaczeniaOk: (k) => `Twój AS jest w ${k} cudzych AS-SET — wszystkie należą do Twoich sąsiadów BGP albo do Ciebie.`
+      wlaczeniaOk: (k) => `Twój AS jest w ${k} cudzych AS-SET — wszystkie należą do Twoich sąsiadów BGP albo do Ciebie.`,
+      prefiksy: (s, a, b) => `${s}: prefiksy według bgpq4 — IPv4: ${a}, IPv6: ${b}.`,
+      lokalnie: 'Liczbę prefiksów w AS-SET i gotowe listy prefiksów do filtrów (bgpq4) pokazuje wersja do pobrania, uruchamiana na Twoim komputerze.',
+      bezBgpq4: 'Narzędzie działa lokalnie, ale bez bgpq4, więc list prefiksów nie ma. Zainstaluj bgpq4 (Linux: apt install bgpq4, macOS: brew install bgpq4) albo uruchom wersję w Dockerze.'
     }
   },
   // testy prefiksów
@@ -214,7 +221,7 @@ en: {
   sprawdz: 'Check',
   sprawdzam: 'Checking…',
   czas: 'Results in a few seconds. Your browser fetches the data from public services (including the RIPE Database, IRR registries and PeeringDB).',
-  wersja: 'Version 1.0.0 · 15 October 2026',
+  wersja: 'Version 1.1.0 · 17 October 2026',
   itoroNad: 'Tools provided by ITORO',
   itoroH2: 'We improve the security of your network',
   itoroP1: 'We deploy and operate DDoS protection systems, mainly in telecommunications networks and data centres.',
@@ -228,7 +235,7 @@ en: {
   krok: {
     as: 'AS data', prefiksy: 'announced prefixes', roa: 'ROAs and ASPA', irr: 'route objects (IRR)',
     autnum: 'aut-num and AS-SET', pdb: 'PeeringDB', abuse: 'abuse contact', sasiedzi: 'BGP neighbours',
-    wlaczenia: 'who includes your AS in AS-SETs', pref: (n, m) => `prefix details (${n}/${m})`, wlasciciel: (n, m) => `resource holders (${n}/${m})`, operator: 'operator ROAs'
+    listy: 'prefix lists (bgpq4)', wlaczenia: 'who includes your AS in AS-SETs', pref: (n, m) => `prefix details (${n}/${m})`, wlasciciel: (n, m) => `resource holders (${n}/${m})`, operator: 'operator ROAs'
   },
   bladAs: 'Enter a valid AS number (1–4294967294).',
   bladSieci: (u) => `Could not fetch data (${u}). Please try again shortly.`,
@@ -276,6 +283,10 @@ en: {
   sekcjaPrefiksy: 'Prefixes',
   sekcjaObiekty: 'Objects ready to paste',
   obiektyOpis: 'Suggestions based on the result. Review them before creating — the maintainer (mnt-by) is copied from existing objects.',
+  sekcjaListy: 'Prefix lists (bgpq4, local version)',
+  listyOpis: 'Generated on your computer by bgpq4 from your AS-SETs. This is roughly the filter an operator will build from them.',
+  pobierzListe: 'Download the full list (.txt)',
+  listaObcieta: (n, m) => `Showing ${n} of ${m} lines — the full list is in the download.`,
   sekcjaReczne: 'What cannot be checked from outside',
   sekcjaPodstawa: 'What the tests are based on',
   kolPrefiks: 'Prefix', kolRpki: 'RPKI', kolPodzial: 'Split into /24 (/48)', kolIrr: 'Route object', kolWlasciciel: 'Holder', kolUwagi: 'Notes',
@@ -311,7 +322,10 @@ en: {
       wlaczeniaObce: (k, l) => `Networks with no visible BGP relationship to you have included your AS in their AS-SETs (other than peer or IXP lists) (${k}): ${l}. This is what the prelude to a hijack attempt described at DKNOG15 looked like. Each such inclusion lets that network announce your prefixes through its upstreams despite IRR filters — review them and ask for removal.`,
       wlaczeniaIxp: (k, l) => `Your AS is in peer or IXP member sets of networks with no visible BGP relationship to you (${k}): ${l}. These usually document peering — check that you really have a session with them. Such sets can also be used to bypass filters.`,
       wlaczeniaNieznane: (k, l) => `Your AS is in AS-SETs whose names carry no owner AS number (${k}): ${l}. Check in the IRR who maintains them and whether they are your providers or IXPs.`,
-      wlaczeniaOk: (k) => `Your AS is in ${k} other AS-SETs — all belong to your BGP neighbours or to you.`
+      wlaczeniaOk: (k) => `Your AS is in ${k} other AS-SETs — all belong to your BGP neighbours or to you.`,
+      prefiksy: (s, a, b) => `${s}: prefixes according to bgpq4 — IPv4: ${a}, IPv6: ${b}.`,
+      lokalnie: 'The prefix count of your AS-SET and ready prefix lists for filters (bgpq4) are shown by the downloadable version that runs on your computer.',
+      bezBgpq4: 'The tool is running locally, but without bgpq4, so there are no prefix lists. Install bgpq4 (Linux: apt install bgpq4, macOS: brew install bgpq4) or run the Docker version.'
     }
   },
   p: {

@@ -19,7 +19,7 @@ window.NAPISY.ro = {
   sprawdz: 'Verifică',
   sprawdzam: 'Se verifică…',
   czas: 'Rezultatul în câteva secunde. Browserul dumneavoastră preia datele din servicii publice (printre altele baza de date RIPE, registrele IRR și PeeringDB).',
-  wersja: 'Versiunea 1.0.0 · 15 octombrie 2026',
+  wersja: 'Versiunea 1.1.0 · 17 octombrie 2026',
   itoroNad: 'Instrumente oferite de ITORO',
   itoroH2: 'Îmbunătățim securitatea rețelei dumneavoastră',
   itoroP1: 'Implementăm și operăm sisteme de protecție împotriva atacurilor DDoS, în principal în rețelele operatorilor de telecomunicații și în centrele de date.',
@@ -33,7 +33,7 @@ window.NAPISY.ro = {
   krok: {
     as: 'date AS', prefiksy: 'prefixe anunțate', roa: 'ROA și ASPA', irr: 'obiecte route (IRR)',
     autnum: 'aut-num și AS-SET', pdb: 'PeeringDB', abuse: 'contact abuse', sasiedzi: 'vecini BGP',
-    wlaczenia: 'cine include AS-ul dumneavoastră în AS-SET', pref: (n, m) => `detalii prefixe (${n}/${m})`, wlasciciel: (n, m) => `deținători de resurse (${n}/${m})`, operator: 'ROA ale operatorului'
+    listy: 'liste de prefixe (bgpq4)', wlaczenia: 'cine include AS-ul dumneavoastră în AS-SET', pref: (n, m) => `detalii prefixe (${n}/${m})`, wlasciciel: (n, m) => `deținători de resurse (${n}/${m})`, operator: 'ROA ale operatorului'
   },
   bladAs: 'Introduceți un număr AS valid (1–4294967294).',
   bladSieci: (u) => `Datele nu au putut fi preluate (${u}). Încercați din nou în scurt timp.`,
@@ -81,6 +81,10 @@ window.NAPISY.ro = {
   sekcjaPrefiksy: 'Prefixe',
   sekcjaObiekty: 'Obiecte gata de lipit',
   obiektyOpis: 'Propuneri pe baza rezultatului. Verificați-le înainte de creare — maintainerul (mnt-by) a fost preluat din obiectele existente.',
+  sekcjaListy: 'Liste de prefixe (bgpq4, versiune locală)',
+  listyOpis: 'Generate pe calculatorul dumneavoastră de bgpq4 din AS-SET-urile dumneavoastră. Aproximativ acesta este filtrul pe care îl va construi un operator.',
+  pobierzListe: 'Descărcați lista completă (.txt)',
+  listaObcieta: (n, m) => `Sunt afișate ${n} din ${m} rânduri — lista completă este în fișierul descărcat.`,
   sekcjaReczne: 'Ce nu poate fi verificat din exterior',
   sekcjaPodstawa: 'Pe ce se bazează testele',
   kolPrefiks: 'Prefix', kolRpki: 'RPKI', kolPodzial: 'Împărțire în /24 (/48)', kolIrr: 'Obiect route', kolWlasciciel: 'Deținător', kolUwagi: 'Observații',
@@ -116,7 +120,10 @@ window.NAPISY.ro = {
       wlaczeniaObce: (k, l) => `Rețele fără o relație BGP vizibilă cu dumneavoastră au inclus AS-ul dumneavoastră în AS-SET-urile lor (altele decât liste de peeri sau IXP) (${k}): ${l}. Exact așa arăta preludiul tentativei de deturnare descrise la DKNOG15. Fiecare astfel de includere permite acelei rețele să anunțe prefixele dumneavoastră prin operatorii săi din amonte, în ciuda filtrelor IRR — verificați-le și cereți eliminarea.`,
       wlaczeniaIxp: (k, l) => `AS-ul dumneavoastră se află în seturi de peeri sau de membri IXP ale unor rețele fără o relație BGP vizibilă cu dumneavoastră (${k}): ${l}. De regulă, acestea documentează peeringul — verificați dacă aveți într-adevăr o sesiune cu ele. Și astfel de seturi pot fi folosite pentru a ocoli filtrele.`,
       wlaczeniaNieznane: (k, l) => `AS-ul dumneavoastră se află în AS-SET-uri ale căror nume nu conțin numărul AS al deținătorului (${k}): ${l}. Verificați în baza de date IRR cine le administrează și dacă sunt operatorii dumneavoastră sau IXP-uri.`,
-      wlaczeniaOk: (k) => `AS-ul dumneavoastră se află în AS-SET-uri ale altor rețele (număr: ${k}) — toate aparțin vecinilor dumneavoastră BGP sau chiar dumneavoastră.`
+      wlaczeniaOk: (k) => `AS-ul dumneavoastră se află în AS-SET-uri ale altor rețele (număr: ${k}) — toate aparțin vecinilor dumneavoastră BGP sau chiar dumneavoastră.`,
+      prefiksy: (s, a, b) => `${s}: prefixe conform bgpq4 — IPv4: ${a}, IPv6: ${b}.`,
+      lokalnie: 'Numărul de prefixe din AS-SET și listele de prefixe gata pentru filtre (bgpq4) apar în versiunea descărcabilă, rulată pe calculatorul dumneavoastră.',
+      bezBgpq4: 'Instrumentul rulează local, dar fără bgpq4, deci nu există liste de prefixe. Instalați bgpq4 (Linux: apt install bgpq4, macOS: brew install bgpq4) sau folosiți versiunea Docker.'
     }
   },
   p: {

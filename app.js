@@ -38,6 +38,8 @@ function wczytajJezyk() {
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const ZRODLO = 'itoro-scrubbing';
+// Wersja lokalna (serwer.py, Docker): strona z localhost — wtedy pytamy lokalny serwer o bgpq4.
+const lokalnie = ['localhost', '127.0.0.1', '[::1]', '::1'].includes(location.hostname);
 const RIR_AUT = ['RIPE', 'ARIN', 'APNIC', 'AFRINIC', 'LACNIC'];
 const LIMIT_PREF = 150;      // szczegółowe zapytania o pojedyncze prefiksy
 const LIMIT_ENUM = 4096;     // maks. liczba bloków /24 (/48) wyliczanych dla jednego prefiksu
@@ -422,6 +424,27 @@ async function analizuj(asn, opAsn, tryb, postep) {
     if (!obce.length && !nieznane.length && !ixpPeer.length) dodajAs('wlaczenia', 'ok', N.t.higiena.wlaczeniaOk(wpisy.length));
   }
 
+  // 7. listy prefiksów z bgpq4 — tylko w wersji uruchomionej lokalnie (serwer.py albo Docker)
+  W.listy = {};
+  if (lokalnie && nazwy.size) {
+    let stan = null;
+    try { stan = await pobierz('api/status', { opcjonalne: true, czas: 5000 }); } catch (e) { stan = null; }
+    if (stan && stan.bgpq4) {
+      for (const [nazwa, zrodlo] of nazwy) {
+        postep(N.krok.listy);
+        const q = ip => `api/prefiksy?zbior=${encodeURIComponent(nazwa)}&ip=${ip}${zrodlo ? '&zrodlo=' + encodeURIComponent(zrodlo) : ''}`;
+        const [v4, v6] = await Promise.all([pobierz(q(4), { opcjonalne: true, czas: 150000 }), pobierz(q(6), { opcjonalne: true, czas: 150000 })]);
+        if (!v4 && !v6) { bledy.push(N.krok.listy); continue; }
+        W.listy[nazwa] = { v4: (v4 && v4.prefiksy) || [], v6: (v6 && v6.prefiksy) || [] };
+        dodajAs('asetPrefiksy', 'info', N.t.higiena.prefiksy(esc(nazwa), W.listy[nazwa].v4.length, W.listy[nazwa].v6.length));
+      }
+    } else if (stan && stan.bgpq4 === false) {
+      dodajAs('asetBezBgpq4', 'info', N.t.higiena.bezBgpq4);
+    }
+  } else if (!lokalnie && nazwy.size) {
+    dodajAs('asetPrefiksyLokalnie', 'info', N.t.higiena.lokalnie);
+  }
+
   // operatorzy nadrzędni
   const lewi = ((sasiedzi && sasiedzi.data && sasiedzi.data.neighbours) || []).filter(n => n.type === 'left');
   if (sasiedzi && lista.length) {
@@ -756,6 +779,31 @@ function rysujPlan(W) {
   </section>`;
 }
 
+const LIMIT_WIERSZY = 5000;
+function rysujListy(W) {
+  const zbiory = Object.entries(W.listy || {});
+  if (!zbiory.length) return '';
+  const bloki = zbiory.map(([nazwa, l]) => {
+    const id = nazwa.replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const lista = (ip, l2) => [`    prefix-list ${id}-v${ip} {`, ...l2.map(p => `        ${p};`), `    }`];
+    const pelna = ['policy-options {', ...lista(4, l.v4), ...lista(6, l.v6), '}'].join('\n');
+    const wiersze = pelna.split('\n');
+    const pokaz = wiersze.length > LIMIT_WIERSZY ? wiersze.slice(0, LIMIT_WIERSZY).join('\n') + '\n…' : pelna;
+    const pobierzId = 'p' + Math.random().toString(36).slice(2, 8);
+    ZAWARTOSC_LIST[pobierzId] = { nazwa: `${id}-prefix-lists.txt`, tresc: pelna + '\n\n# IPv4\n' + l.v4.join('\n') + '\n\n# IPv6\n' + l.v6.join('\n') + '\n' };
+    return `<h4 class="lista-tytul">${esc(nazwa)} — IPv4: ${l.v4.length}, IPv6: ${l.v6.length}</h4>
+      ${blokKopiuj('Junos (prefix-list)', pokaz)}
+      ${wiersze.length > LIMIT_WIERSZY ? `<p class="drobne">${esc(N.listaObcieta(LIMIT_WIERSZY, wiersze.length))}</p>` : ''}
+      <p><button type="button" class="przycisk-maly" data-pobierz="${pobierzId}">${esc(N.pobierzListe)}</button></p>`;
+  }).join('');
+  return `<section class="karta">
+    <h3>${esc(N.sekcjaListy)}</h3>
+    <p class="drobne">${esc(N.listyOpis)}</p>
+    ${bloki}
+  </section>`;
+}
+const ZAWARTOSC_LIST = {};
+
 function rysuj(W) {
   const el = $('#wynik');
   const prefWiersze = W.prefiksy.map(p => {
@@ -804,6 +852,8 @@ function rysuj(W) {
     ${prefWiersze.length > POKAZ ? `<button type="button" class="przycisk-maly no-print" id="pokazWiecej">${esc(N.pokazWszystkie(prefWiersze.length))}</button>` : ''}
   </section>` : ''}
 
+  ${rysujListy(W)}
+
   <section class="karta">
     <h3>${esc(N.sekcjaReczne)}</h3>
     <dl class="reczne">${N.reczne.map(([a, b]) => `<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl>
@@ -818,6 +868,14 @@ function rysuj(W) {
 
   el.hidden = false;
   el.querySelectorAll('[data-kopiuj]').forEach(b => b.addEventListener('click', () => kopiuj($('#' + b.dataset.kopiuj).textContent, b)));
+  el.querySelectorAll('[data-pobierz]').forEach(b => b.addEventListener('click', () => {
+    const z = ZAWARTOSC_LIST[b.dataset.pobierz];
+    if (!z) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([z.tresc], { type: 'text/plain' }));
+    a.download = z.nazwa; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }));
   $('#drukuj').addEventListener('click', () => window.print());
   $('#pobierzJson').addEventListener('click', () => {
     const blob = new Blob([JSON.stringify(W, (k, v) => typeof v === 'bigint' ? v.toString() : v instanceof Set ? [...v] : v, 2)], { type: 'application/json' });

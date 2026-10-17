@@ -1,0 +1,5 @@
+.git
+zrzuty
+skrypty
+*.md
+!README.md

@@ -19,7 +19,7 @@ window.NAPISY.fr = {
   sprawdz: 'Vérifier',
   sprawdzam: 'Vérification…',
   czas: 'Résultat en quelques secondes. Votre navigateur récupère les données auprès de services publics (notamment la base RIPE, les registres IRR et PeeringDB).',
-  wersja: 'Version 1.0.0 · 15 octobre 2026',
+  wersja: 'Version 1.1.0 · 17 octobre 2026',
   itoroNad: 'Outils proposés par ITORO',
   itoroH2: 'Nous renforçons la sécurité de votre réseau',
   itoroP1: 'Nous déployons et exploitons des systèmes de protection contre les attaques DDoS, principalement dans les réseaux d’opérateurs télécoms et les centres de données.',
@@ -33,7 +33,7 @@ window.NAPISY.fr = {
   krok: {
     as: 'données de l’AS', prefiksy: 'préfixes annoncés', roa: 'ROA et ASPA', irr: 'objets route (IRR)',
     autnum: 'aut-num et AS-SET', pdb: 'PeeringDB', abuse: 'contact abuse', sasiedzi: 'voisins BGP',
-    wlaczenia: 'qui inclut votre AS dans des AS-SET', pref: (n, m) => `détails des préfixes (${n}/${m})`, wlasciciel: (n, m) => `titulaires des ressources (${n}/${m})`, operator: 'ROA de l’opérateur'
+    listy: 'listes de préfixes (bgpq4)', wlaczenia: 'qui inclut votre AS dans des AS-SET', pref: (n, m) => `détails des préfixes (${n}/${m})`, wlasciciel: (n, m) => `titulaires des ressources (${n}/${m})`, operator: 'ROA de l’opérateur'
   },
   bladAs: 'Saisissez un numéro d’AS valide (1–4294967294).',
   bladSieci: (u) => `Impossible de récupérer les données (${u}). Réessayez dans un instant.`,
@@ -81,6 +81,10 @@ window.NAPISY.fr = {
   sekcjaPrefiksy: 'Préfixes',
   sekcjaObiekty: 'Objets prêts à coller',
   obiektyOpis: 'Suggestions établies à partir du résultat. Vérifiez-les avant de les créer — le mainteneur (mnt-by) est repris des objets existants.',
+  sekcjaListy: 'Listes de préfixes (bgpq4, version locale)',
+  listyOpis: 'Générées sur votre ordinateur par bgpq4 à partir de vos AS-SET. C’est à peu près le filtre qu’un opérateur en tirera.',
+  pobierzListe: 'Télécharger la liste complète (.txt)',
+  listaObcieta: (n, m) => `${n} lignes affichées sur ${m} — la liste complète est dans le fichier.`,
   sekcjaReczne: 'Ce qui ne peut pas être vérifié de l’extérieur',
   sekcjaPodstawa: 'Sur quoi reposent les tests',
   kolPrefiks: 'Préfixe', kolRpki: 'RPKI', kolPodzial: 'Découpage en /24 (/48)', kolIrr: 'Objet route', kolWlasciciel: 'Titulaire', kolUwagi: 'Remarques',
@@ -116,7 +120,10 @@ window.NAPISY.fr = {
       wlaczeniaObce: (k, l) => `Des réseaux sans relation BGP visible avec vous ont inclus votre AS dans leurs AS-SET (hors listes de peers ou d’IXP) (${k}) : ${l}. C’est ainsi que se présentait le prélude à la tentative de détournement décrite à DKNOG15. Chacune de ces inclusions permet à ce réseau d’annoncer vos préfixes via ses opérateurs amont malgré les filtres IRR — vérifiez-les et demandez leur retrait.`,
       wlaczeniaIxp: (k, l) => `Votre AS figure dans des ensembles de peers ou de membres d’IXP de réseaux sans relation BGP visible avec vous (${k}) : ${l}. Ils documentent généralement du peering — vérifiez que vous avez réellement une session avec eux. Ces ensembles peuvent aussi servir à contourner les filtres.`,
       wlaczeniaNieznane: (k, l) => `Votre AS figure dans des AS-SET dont le nom ne comporte aucun numéro d’AS du titulaire (${k}) : ${l}. Vérifiez dans l’IRR qui les maintient et s’il s’agit de vos opérateurs amont ou d’IXP.`,
-      wlaczeniaOk: (k) => `Votre AS figure dans ${k} AS-SET d’autres réseaux — tous appartiennent à vos voisins BGP ou à vous-même.`
+      wlaczeniaOk: (k) => `Votre AS figure dans ${k} AS-SET d’autres réseaux — tous appartiennent à vos voisins BGP ou à vous-même.`,
+      prefiksy: (s, a, b) => `${s} : préfixes selon bgpq4 — IPv4 : ${a}, IPv6 : ${b}.`,
+      lokalnie: 'Le nombre de préfixes de votre AS-SET et des listes de préfixes prêtes pour les filtres (bgpq4) sont fournis par la version téléchargeable, exécutée sur votre ordinateur.',
+      bezBgpq4: 'L’outil tourne en local, mais sans bgpq4 : pas de listes de préfixes. Installez bgpq4 (Linux : apt install bgpq4, macOS : brew install bgpq4) ou lancez la version Docker.'
     }
   },
   p: {

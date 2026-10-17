@@ -19,7 +19,7 @@ window.NAPISY.nl = {
   sprawdz: 'Controleren',
   sprawdzam: 'Bezig met controleren…',
   czas: 'Resultaat binnen enkele seconden. Uw browser haalt de gegevens op bij openbare diensten (o.a. de RIPE Database, IRR-registers en PeeringDB).',
-  wersja: 'Versie 1.0.0 · 15 oktober 2026',
+  wersja: 'Versie 1.1.0 · 17 oktober 2026',
   itoroNad: 'Tools aangeboden door ITORO',
   itoroH2: 'Wij verbeteren de beveiliging van uw netwerk',
   itoroP1: 'Wij implementeren en beheren DDoS-beschermingssystemen, vooral in netwerken van telecomoperators en in datacenters.',
@@ -33,7 +33,7 @@ window.NAPISY.nl = {
   krok: {
     as: 'AS-gegevens', prefiksy: 'aangekondigde prefixen', roa: 'ROA\'s en ASPA', irr: 'route-objecten (IRR)',
     autnum: 'aut-num en AS-SET', pdb: 'PeeringDB', abuse: 'abusecontact', sasiedzi: 'BGP-buren',
-    wlaczenia: 'wie uw AS in AS-SETs opneemt', pref: (n, m) => `prefixdetails (${n}/${m})`, wlasciciel: (n, m) => `resourcehouders (${n}/${m})`, operator: 'ROA\'s van de operator'
+    listy: 'prefixlijsten (bgpq4)', wlaczenia: 'wie uw AS in AS-SETs opneemt', pref: (n, m) => `prefixdetails (${n}/${m})`, wlasciciel: (n, m) => `resourcehouders (${n}/${m})`, operator: 'ROA\'s van de operator'
   },
   bladAs: 'Voer een geldig AS-nummer in (1–4294967294).',
   bladSieci: (u) => `Gegevens konden niet worden opgehaald (${u}). Probeer het zo meteen opnieuw.`,
@@ -81,6 +81,10 @@ window.NAPISY.nl = {
   sekcjaPrefiksy: 'Prefixen',
   sekcjaObiekty: 'Objecten klaar om te plakken',
   obiektyOpis: 'Voorstellen op basis van het resultaat. Controleer ze voordat u ze aanmaakt — de maintainer (mnt-by) is overgenomen uit bestaande objecten.',
+  sekcjaListy: 'Prefixlijsten (bgpq4, lokale versie)',
+  listyOpis: 'Op uw computer door bgpq4 gegenereerd uit uw AS-SETs. Zo ongeveer ziet het filter eruit dat een operator ervan bouwt.',
+  pobierzListe: 'Volledige lijst downloaden (.txt)',
+  listaObcieta: (n, m) => `${n} van ${m} regels getoond — de volledige lijst staat in de download.`,
   sekcjaReczne: 'Wat niet van buitenaf te controleren is',
   sekcjaPodstawa: 'Waarop de tests zijn gebaseerd',
   kolPrefiks: 'Prefix', kolRpki: 'RPKI', kolPodzial: 'Opsplitsing in /24 (/48)', kolIrr: 'Route-object', kolWlasciciel: 'Houder', kolUwagi: 'Opmerkingen',
@@ -116,7 +120,10 @@ window.NAPISY.nl = {
       wlaczeniaObce: (k, l) => `Netwerken zonder zichtbare BGP-relatie met u hebben uw AS opgenomen in hun AS-SETs (anders dan peer- of IXP-lijsten) (${k}): ${l}. Zo zag de aanloop naar de kapingspoging eruit die op DKNOG15 werd beschreven. Elke zo'n opname stelt dat netwerk in staat uw prefixen via zijn upstreams aan te kondigen ondanks IRR-filters — controleer ze en vraag om verwijdering.`,
       wlaczeniaIxp: (k, l) => `Uw AS staat in peer- of IXP-ledensets van netwerken zonder zichtbare BGP-relatie met u (${k}): ${l}. Meestal documenteren die peering — controleer of u echt een sessie met hen hebt. Ook zulke sets kunnen worden gebruikt om filters te omzeilen.`,
       wlaczeniaNieznane: (k, l) => `Uw AS staat in AS-SETs waarvan de naam geen AS-nummer van de eigenaar bevat (${k}): ${l}. Controleer in de IRR wie ze beheert en of het uw providers of IXP's zijn.`,
-      wlaczeniaOk: (k) => `Uw AS staat in ${k} AS-SETs van anderen — die horen allemaal bij uw BGP-buren of bij uzelf.`
+      wlaczeniaOk: (k) => `Uw AS staat in ${k} AS-SETs van anderen — die horen allemaal bij uw BGP-buren of bij uzelf.`,
+      prefiksy: (s, a, b) => `${s}: prefixen volgens bgpq4 — IPv4: ${a}, IPv6: ${b}.`,
+      lokalnie: 'Het aantal prefixen in uw AS-SET en kant-en-klare prefixlijsten voor filters (bgpq4) ziet u in de downloadbare versie, die op uw eigen computer draait.',
+      bezBgpq4: 'De tool draait lokaal, maar zonder bgpq4, dus zonder prefixlijsten. Installeer bgpq4 (Linux: apt install bgpq4, macOS: brew install bgpq4) of gebruik de Docker-versie.'
     }
   },
   p: {
