@@ -38,8 +38,9 @@ function wczytajJezyk() {
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const ZRODLO = 'itoro-scrubbing';
-// Wersja lokalna (serwer.py, Docker): strona z localhost — wtedy pytamy lokalny serwer o bgpq4.
-const lokalnie = ['localhost', '127.0.0.1', '[::1]', '::1'].includes(location.hostname);
+// Wersja lokalna: serwer.py (także w Dockerze) dopisuje do strony <meta name="itoro-serwer">.
+// Tylko wtedy pytamy o bgpq4 — zwykły serwer plików i itoro.com.pl nie dostają zbędnych zapytań.
+const lokalnie = !!document.querySelector('meta[name="itoro-serwer"]');
 const RIR_AUT = ['RIPE', 'ARIN', 'APNIC', 'AFRINIC', 'LACNIC'];
 const LIMIT_PREF = 150;      // szczegółowe zapytania o pojedyncze prefiksy
 const LIMIT_ENUM = 4096;     // maks. liczba bloków /24 (/48) wyliczanych dla jednego prefiksu

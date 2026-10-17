@@ -70,7 +70,20 @@ class Obsluga(SimpleHTTPRequestHandler):
             return self._json(200, {'bgpq4': bool(BGPQ4), 'wersja': wersja_bgpq4()})
         if u.path.endswith('/api/prefiksy'):
             return self._prefiksy(parse_qs(u.query))
+        if u.path in ('/', '/index.html'):
+            return self._strona()
         return super().do_GET()
+
+    def _strona(self):
+        # Znacznik dla app.js: strona działa z lokalnym serwerem, można pytać o bgpq4.
+        with open(os.path.join(KATALOG, 'index.html'), encoding='utf-8') as f:
+            html = f.read().replace('<head>', '<head><meta name="itoro-serwer" content="1">', 1)
+        tresc = html.encode('utf-8')
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self.send_header('Content-Length', str(len(tresc)))
+        self.end_headers()
+        self.wfile.write(tresc)
 
     def _prefiksy(self, q):
         if not BGPQ4:
