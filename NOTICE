@@ -24,7 +24,8 @@ Poniższe elementy NIE są objęte tymi licencjami.
 2. DOKUMENTY, DO KTÓRYCH ODSYŁA NARZĘDZIE
 
    Dokumenty RFC, dokumenty RIPE i dokumentacja RIR oraz operatorów
-   scrubbing center wymienione w SOURCES.md i ZRODLA.md są cytowane
+   scrubbing center wymienione w README (sekcje „Sources and credits”
+   i „Źródła i autorzy”) są cytowane
    wyłącznie przez odnośniki i streszczenia. Pozostają własnością ich
    autorów.
 

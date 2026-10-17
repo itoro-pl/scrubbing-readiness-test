@@ -862,7 +862,7 @@ function rysuj(W) {
   <section class="karta">
     <h3>${esc(N.sekcjaPodstawa)}</h3>
     <dl class="reczne">${N.podstawa.map(([a, b]) => `<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl>
-    <p class="drobne"><a href="https://github.com/itoro-pl/scrubbing-readiness-test/blob/main/${jezyk === 'pl' ? 'ZRODLA.md' : 'SOURCES.md'}" target="_blank" rel="noopener">${esc(N.podstawaLink)} ↗</a></p>
+    <p class="drobne"><a href="https://github.com/itoro-pl/scrubbing-readiness-test/blob/main/${jezyk === 'pl' ? 'README.pl.md#%C5%BAr%C3%B3d%C5%82a-i-autorzy' : 'README.md#sources-and-credits'}" target="_blank" rel="noopener">${esc(N.podstawaLink)} ↗</a></p>
     <p class="drobne">${esc(N.stopka)}</p>
   </section>`;
 
