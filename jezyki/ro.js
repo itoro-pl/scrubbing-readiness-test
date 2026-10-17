@@ -173,8 +173,8 @@ window.NAPISY.ro = {
     ['ripe-705', 'contact abuse-c obligatoriu în baza de date RIPE'],
     ['Documentația RIR', 'RIPE NCC, ARIN, APNIC, AFRINIC, LACNIC: ROA, obiecte route, as-set, abuse, ASPA'],
     ['MANRS', 'înregistrare în IRR și RPKI, contacte actualizate; AS-SET ca descriere a conului de clienți (modulul 2)'],
-    ['L. Jarlskov (Telia)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): scopul AS-SET, dimensiunea, cine vă include'],
-    ['D. Madory, J. Snijders', '„The Scourge of Excessive AS-SETs” (2025): AS-SET supradimensionate și route leaks'],
+    ['Lasse Jarlskov (Telia Company)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): scopul AS-SET, dimensiunea, cine vă include'],
+    ['Doug Madory, Job Snijders', '„The Scourge of Excessive AS-SETs” (2025): AS-SET supradimensionate și route leaks'],
     ['Operatori', 'documentația publică de implementare a unor operatori cunoscuți de centre de scrubbing: prefix minim, ROA, IRR într-o bază de date RIR, LOA, tunel']
   ],
   podstawaLink: 'Lista completă a surselor, cu linkuri',

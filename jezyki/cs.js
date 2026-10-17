@@ -173,8 +173,8 @@ window.NAPISY.cs = {
     ['ripe-705', 'povinný kontakt abuse-c v databázi RIPE'],
     ['Dokumentace RIR', 'RIPE NCC, ARIN, APNIC, AFRINIC, LACNIC: ROA, objekty route, as-set, abuse, ASPA'],
     ['MANRS', 'registrace v IRR a RPKI, aktuální kontakty; AS-SET jako popis zákaznického kužele (modul 2)'],
-    ['L. Jarlskov (Telia)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): účel AS-SET, velikost, kdo vás zahrnuje'],
-    ['D. Madory, J. Snijders', '„The Scourge of Excessive AS-SETs” (2025): přerostlé AS-SET a úniky tras'],
+    ['Lasse Jarlskov (Telia Company)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): účel AS-SET, velikost, kdo vás zahrnuje'],
+    ['Doug Madory, Job Snijders', '„The Scourge of Excessive AS-SETs” (2025): přerostlé AS-SET a úniky tras'],
     ['Operátoři', 'veřejná dokumentace pro zavedení služby u známých operátorů scrubbing center: minimální prefix, ROA, IRR v databázi RIR, LOA, tunel']
   ],
   podstawaLink: 'Úplný seznam zdrojů s odkazy',

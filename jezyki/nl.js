@@ -173,8 +173,8 @@ window.NAPISY.nl = {
     ['ripe-705', 'verplichte abuse-c in de RIPE Database'],
     ['RIR-documentatie', 'RIPE NCC, ARIN, APNIC, AFRINIC, LACNIC: ROA\'s, route-objecten, as-sets, abuse, ASPA'],
     ['MANRS', 'registratie in IRR en RPKI, actuele contactgegevens; AS-SET als beschrijving van de customer cone (module 2)'],
-    ['L. Jarlskov (Telia)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): doel van de AS-SET, omvang, wie u opneemt'],
-    ['D. Madory, J. Snijders', '„The Scourge of Excessive AS-SETs” (2025): te grote AS-SETs en route leaks'],
+    ['Lasse Jarlskov (Telia Company)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): doel van de AS-SET, omvang, wie u opneemt'],
+    ['Doug Madory, Job Snijders', '„The Scourge of Excessive AS-SETs” (2025): te grote AS-SETs en route leaks'],
     ['Operators', 'openbare onboardingdocumentatie van bekende scrubbingcentra: minimale prefixlengte, ROA, IRR in een RIR-database, LOA, tunnel']
   ],
   podstawaLink: 'Volledige bronnenlijst met links',

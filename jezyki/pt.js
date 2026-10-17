@@ -173,8 +173,8 @@ window.NAPISY.pt = {
     ['ripe-705', 'abuse-c obrigatório na base de dados do RIPE'],
     ['Documentação dos RIR', 'RIPE NCC, ARIN, APNIC, AFRINIC, LACNIC: ROA, objetos route, as-set, abuso, ASPA'],
     ['MANRS', 'registro em IRR e RPKI, contatos atualizados; AS-SET como cone de clientes (módulo 2)'],
-    ['L. Jarlskov (Telia)', '“Securing your AS-set” (BalticNOG 2025), “Prelude to a BGP hijack?” (DKNOG15): finalidade e tamanho do AS-SET, quem inclui você'],
-    ['D. Madory, J. Snijders', '“The Scourge of Excessive AS-SETs” (2025): AS-SET superdimensionados e vazamentos de rotas'],
+    ['Lasse Jarlskov (Telia Company)', '“Securing your AS-set” (BalticNOG 2025), “Prelude to a BGP hijack?” (DKNOG15): finalidade e tamanho do AS-SET, quem inclui você'],
+    ['Doug Madory, Job Snijders', '“The Scourge of Excessive AS-SETs” (2025): AS-SET superdimensionados e vazamentos de rotas'],
     ['Operadores', 'documentação pública de ativação de operadores conhecidos de centros de scrubbing: prefixo mínimo, ROA, IRR numa base de dados de RIR, LOA, túnel']
   ],
   podstawaLink: 'Lista completa de fontes com links',

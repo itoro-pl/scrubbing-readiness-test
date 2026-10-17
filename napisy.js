@@ -184,8 +184,8 @@ pl: {
     ['ripe-705', 'obowiązkowy kontakt abuse-c w bazie RIPE'],
     ['Dokumentacja RIR', 'RIPE NCC, ARIN, APNIC, AFRINIC, LACNIC: ROA, obiekty route, as-set, abuse, ASPA'],
     ['MANRS', 'rejestracja w IRR i RPKI, aktualne kontakty; AS-SET jako opis stożka klientów (moduł 2)'],
-    ['L. Jarlskov (Telia)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): cel AS-SET, rozmiar, kto Cię włącza'],
-    ['D. Madory, J. Snijders', '„The Scourge of Excessive AS-SETs” (2025): nadmiernie rozbudowane AS-SET i wycieki tras'],
+    ['Lasse Jarlskov (Telia Company)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): cel AS-SET, rozmiar, kto Cię włącza'],
+    ['Doug Madory, Job Snijders', '„The Scourge of Excessive AS-SETs” (2025): nadmiernie rozbudowane AS-SET i wycieki tras'],
     ['Operatorzy', 'publiczna dokumentacja wdrożeniowa znanych operatorów scrubbing center: minimalny prefiks, ROA, IRR w bazie RIR, LOA, tunel']
   ],
   podstawaLink: 'Pełna lista źródeł z odnośnikami',
@@ -368,8 +368,8 @@ en: {
     ['ripe-705', 'mandatory abuse-c in the RIPE Database'],
     ['RIR documentation', 'RIPE NCC, ARIN, APNIC, AFRINIC, LACNIC: ROAs, route objects, as-sets, abuse, ASPA'],
     ['MANRS', 'IRR and RPKI registration, up-to-date contacts; AS-SET as the customer cone (module 2)'],
-    ['L. Jarlskov (Telia)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): AS-SET purpose, size, who includes you'],
-    ['D. Madory, J. Snijders', '„The Scourge of Excessive AS-SETs” (2025): oversized AS-SETs and route leaks'],
+    ['Lasse Jarlskov (Telia Company)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): AS-SET purpose, size, who includes you'],
+    ['Doug Madory, Job Snijders', '„The Scourge of Excessive AS-SETs” (2025): oversized AS-SETs and route leaks'],
     ['Operators', 'public onboarding documentation of well-known scrubbing centre operators: minimum prefix, ROA, IRR in a RIR database, LOA, tunnel']
   ],
   podstawaLink: 'Full list of sources with links',

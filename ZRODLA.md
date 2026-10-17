@@ -93,6 +93,6 @@ Pominęliśmy Radware, NETSCOUT Arbor Cloud, Corero, Voxility, Path.net i polski
 | abuse-c | ripe-705, polityki APNIC, AFRINIC i LACNIC; MANRS |
 | AS-SET zawiera Twój AS, nazwa hierarchiczna | RFC 2622; dokumentacja bazy RIPE i APNIC; MANRS |
 | ROA z AS0, obiekty route z innym origin | RFC 6483; RFC 6811 |
-| Rozmiar i głębokość AS-SET, największe składowe, zbiory IXP i peerów, członkowie niewidoczni w BGP | Jarlskov (BalticNOG 2025); Madory i Snijders (2025); MANRS, moduł 2 |
-| Kto włącza Twój AS do swoich AS-SET | Jarlskov (BalticNOG 2025, DKNOG15) |
+| Rozmiar i głębokość AS-SET, największe składowe, zbiory IXP i peerów, członkowie niewidoczni w BGP | Lasse Jarlskov (BalticNOG 2025); Doug Madory i Job Snijders (2025); MANRS, moduł 2 |
+| Kto włącza Twój AS do swoich AS-SET | Lasse Jarlskov (BalticNOG 2025, DKNOG15) |
 | Szerokie maxLength (zalecenie) | RFC 9319 §5 |

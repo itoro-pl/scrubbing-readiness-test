@@ -101,6 +101,6 @@ than NASK.
 | abuse-c | ripe-705; MANRS |
 | AS-SET contains your AS, hierarchical name | RFC 2622; RIPE Database documentation; MANRS |
 | AS0 ROA, conflicting route objects with another origin | RFC 6483; RFC 6811 |
-| AS-SET size, depth, largest members, IXP/peer sets, members not seen in BGP | Jarlskov (BalticNOG 2025); Madory & Snijders (2025); MANRS module 2 |
-| Who includes your AS in their AS-SETs | Jarlskov (BalticNOG 2025, DKNOG15) |
+| AS-SET size, depth, largest members, IXP/peer sets, members not seen in BGP | Lasse Jarlskov (BalticNOG 2025); Doug Madory and Job Snijders (2025); MANRS module 2 |
+| Who includes your AS in their AS-SETs | Lasse Jarlskov (BalticNOG 2025, DKNOG15) |
 | Broad maxLength (recommendation) | RFC 9319 §5 |
