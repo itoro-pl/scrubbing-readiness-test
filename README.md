@@ -1,6 +1,6 @@
 # Scrubbing centre prefix readiness test
 
-![Version 1.1.0](https://img.shields.io/badge/version-1.1.0-B72343)
+![Version 1.2.0](https://img.shields.io/badge/version-1.2.0-B72343)
 ![5 RIRs](https://img.shields.io/badge/RIRs-RIPE%20%C2%B7%20ARIN%20%C2%B7%20APNIC%20%C2%B7%20AFRINIC%20%C2%B7%20LACNIC-1a56db)
 ![10 languages](https://img.shields.io/badge/languages-10-1a56db)
 ![No backend](https://img.shields.io/badge/backend-none-11603b)
@@ -45,7 +45,9 @@ attack. This test finds such gaps in advance.
 **AS level:** AS exists and announces prefixes · abuse contact · aut-num and
 the AS-SET in its export policy · AS-SET contains your AS, lives in a RIR
 database and has a hierarchical name · AS-SET in PeeringDB · at least two
-upstreams · ASPA (includes the scrubbing centre's AS) · ROAs for the
+upstreams · **ASPA**: providers visible in BGP but missing from your ASPA, entries not visible in BGP,
+provider-free ASPA (AS0) despite visible upstreams, the scrubbing centre's AS, and a ready ASPA proposal ·
+ROAs for the
 scrubbing centre's AS when it originates · stale route objects.
 
 **AS-SET hygiene:** expanded size against customers visible in BGP · nesting
@@ -246,7 +248,9 @@ PDF or saved as JSON.
 
 ## What's new
 
-**1.1.0 — 17 October 2026:** AS-SET hygiene checks, „who includes your AS”,
+**1.2.0 — 19 October 2026:** ASPA checks after Ondřej Caletka's DKNOG16 talk — providers missing from
+ASPA, entries not seen in BGP, provider-free ASPA with upstreams, a ready ASPA proposal, ASPA rules and a
+router checklist item. **1.1.0 — 17 October 2026:** AS-SET hygiene checks, „who includes your AS”,
 downloadable version (`start.bat`, `start.sh`, Docker with bgpq4) with prefix
 lists, full author names in sources. **1.0.0 — 15 October 2026:** first release.
 Details in [CHANGELOG.md](CHANGELOG.md).
@@ -299,13 +303,14 @@ Resource holder and abuse data for every RIR come from RDAP; the
 authoritative server is found through the [IANA RDAP bootstrap](https://data.iana.org/rdap/)
 ([RFC 9224](https://www.rfc-editor.org/rfc/rfc9224)).
 
-### 4. AS-SET hygiene — talks and articles
+### 4. AS-SET hygiene and ASPA — talks and articles
 
 | Author(s) | Title, venue, date | What we take from it | Test in the tool |
 |---|---|---|---|
 | Lasse Jarlskov (Telia Company) | „Securing your AS-set”, [BalticNOG 2025](https://events.balticnog.org/event/1/contributions/51/), Vilnius, 25 September 2025; same talk at the Netnod meeting, 8 October 2025 ([slides, PDF](https://www.netnod.se/sites/default/files/2025-10/10.Securing%20your%20AS-Set-Netnod.pptx_.pdf)) | three AS-SET types (customers, peers, IXP members) — only the customer set is used to build filters; rule of thumb „would you re-advertise this in BGP?”; bigger is not better, recursion is dangerous; clean up regularly; check your customers' AS-SET sizes; check who includes you | AS-SET size against BGP customers, nesting depth, largest member sets, IXP/peer sets inside a customer set, members not seen in BGP, who includes your AS |
 | Lasse Jarlskov (Telia Company); ASPA part with Job Snijders | „Prelude to a BGP hijack?”, [DKNOG15](https://events.dknog.dk/event/32/contributions/297/), Copenhagen, 7 March 2025 ([video](https://www.youtube.com/watch?v=ejwp6b6lVWQ)) | anyone can put your AS in their AS-SET; with a spoofed origin the route is ROA-valid and passes RPSL-based transit filters; defence: ASPA and monitoring IRRs for new references to your AS | who includes your AS (sets of networks with no BGP relationship are flagged); ASPA recommendation; monitoring step |
 | Doug Madory, Job Snijders | [„The Scourge of Excessive AS-SETs”](https://www.kentik.com/blog/the-scourge-of-excessive-as-sets/), Kentik blog, 23 April 2025 | thousands of AS-SETs expand to over 1,000 ASNs, some beyond the whole routing table; such filters did not stop real route leaks; keep membership minimal, avoid recursion, use hierarchical names, name the authoritative IRR source in PeeringDB | AS-SET size and depth, hierarchical name, PeeringDB AS-SET with source |
+| Ondřej Caletka (RIPE NCC) | „Autonomous System Provider Authorisation — New tool for routing security”, [DKNOG16](https://events.dknog.dk/event/35/contributions/311/), March 2026 ([slides, PDF](https://events.dknog.dk/event/35/contributions/311/attachments/138/352/DKNOG16-ASPA.pdf)) | ROAs do not protect against forged AS paths or path-preserving leaks — ASPA does; list all providers, backup ones too; do not list plain peers; list non-transparent IXP route servers; update ASPA together with the IRR; on routers reject invalid, start with logging, warn customers who did not list you | providers visible in BGP missing from ASPA, ASPA entries not visible in BGP, provider-free ASPA (AS0) with visible upstreams, ready ASPA proposal, ASPA rules in the action plan, router checklist |
 | MANRS | [„Module 2: IRRs, RPKI, and PeeringDB”](https://manrs.org/resources/training/tutorials/irrs-rpki-peeringdb/) (MANRS training) | document your customer cone with an as-set (e.g. AS64500:AS-CUSTOMERS), register route objects, publish routing policy in aut-num, keep PeeringDB up to date | AS-SET in aut-num export, AS-SET contains your AS, PeeringDB |
 
 ### 5. Other sources
@@ -350,6 +355,7 @@ than NASK.
 | LOA when the space belongs to another organisation or is PA from a LIR | Cloudflare, F5, Gcore |
 | ROA for the provider's AS when it originates | RFC 9319 §5.1; Lumen |
 | ASPA includes the provider's AS | IETF SIDROPS ASPA |
+| ASPA lists all providers seen in BGP, no provider-free ASPA with upstreams, ASPA proposal | Ondřej Caletka (DKNOG16, 2026); IETF SIDROPS ASPA |
 | abuse-c | ripe-705; MANRS |
 | AS-SET contains your AS, hierarchical name | RFC 2622; RIPE Database documentation; MANRS |
 | AS0 ROA, conflicting route objects with another origin | RFC 6483; RFC 6811 |

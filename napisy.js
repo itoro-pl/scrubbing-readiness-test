@@ -27,7 +27,7 @@ pl: {
   sprawdz: 'Sprawdź',
   sprawdzam: 'Sprawdzam…',
   czas: 'Wynik w kilkanaście sekund. Dane pobiera Twoja przeglądarka z publicznych serwisów (m.in. z bazy RIPE, rejestrów IRR i PeeringDB).',
-  wersja: 'Wersja 1.1.0 · 17 października 2026',
+  wersja: 'Wersja 1.2.0 · 19 października 2026',
   itoroNad: 'Narzędzia udostępnia ITORO',
   itoroH2: 'Poprawiamy bezpieczeństwo Twojej sieci',
   itoroP1: 'Wdrażamy i utrzymujemy systemy ochrony przed atakami DDoS, głównie w sieciach operatorów telekomunikacyjnych i w centrach danych.',
@@ -72,6 +72,7 @@ pl: {
     loa: ['Zbierz listę prefiksów z tego kroku i właściciela każdego z nich (dane z bazy RIR).', 'Poproś właściciela przestrzeni — a jeśli prefiks ogłasza operator nadrzędny, także jego — o podpisanie LOA według wzoru poniżej.', 'Operatorzy zwykle przyjmują LOA w PDF, na papierze firmowym, z podpisem osoby upoważnionej.'],
     asset: ['Zasada: w AS-SET umieszczaj tylko to, co ogłaszasz dalej w BGP, czyli siebie i swoich klientów. Nie dodawaj IXP ani peerów.', 'Zanim włączysz AS-SET klienta, sprawdź jego rozmiar; usuwaj klientów, którzy odeszli, i przeglądaj zbiór regularnie.'],
     wlaczenia: ['Przejrzyj listę zbiorów z tego kroku. Właściciela znajdziesz w obiekcie as-set (mnt-by, admin-c) w bazie IRR.', 'Jeżeli zbiór należy do sieci, z którą nie masz relacji BGP, poproś o usunięcie Twojego AS. Gdy nie odpowiada, zgłoś to do operatora bazy IRR.', 'Opublikuj ASPA z listą swoich operatorów nadrzędnych — to ogranicza podszywanie się pod Twój AS przez cudze AS-SET.', 'Włącz stały monitoring nowych AS-SET, które odwołują się do Twojego AS.'],
+    aspa: ['Wpisz wszystkich swoich providerów, także zapasowych, nawet jeśli dziś nie widać ich w ścieżce AS.', 'Nie wpisuj zwykłych peerów, chyba że któryś działa wobec Ciebie jak provider.', 'Wpisz nietransparentne route servery IXP, z których korzystasz — inaczej ich AS zostanie uznany za dolinę w ścieżce.', 'Aktualizuj ASPA razem z IRR: każda zmiana operatora tranzytowego to zmiana w obu miejscach.'],
     pdb: ['Zaloguj się do peeringdb.com i otwórz rekord swojej sieci (Network).', 'W polu „IRR as-set/route-set” wpisz swój AS-SET razem ze źródłem, np. RIPE::AS64496:AS-KLIENCI.', 'Zapisz i sprawdź, czy pole zgadza się z aut-num.'],
     inne: []
   },
@@ -117,7 +118,7 @@ pl: {
     assetHier: { ok: (s) => `${s} ma nazwę hierarchiczną.`, zal: (s) => `${s} ma krótką nazwę. Nowe zbiory zakłada się z prefiksem AS (np. AS64496:AS-KLIENCI, RFC 2622) — to chroni przed podszyciem w innych rejestrach.` },
     pdb: { ok: (s) => `PeeringDB: wpis istnieje, AS-SET ${s}.`, zal: 'Brak wpisu w PeeringDB albo pustego pola AS-SET. Wielu operatorów buduje filtry na podstawie AS-SET z PeeringDB.', roz: (a, b) => `AS-SET w PeeringDB (${a}) różni się od AS-SET w aut-num (${b}).` },
     upstream: { ok: (n) => `Liczba operatorów nadrzędnych widocznych w BGP: ${n}.`, zal: (n) => `Widoczny tylko ${n} operator nadrzędny. Przy jednym łączu atak wysyca je, zanim przekierowanie zacznie działać — warto mieć drugie łącze albo zgodę operatora na RTBH i BGP FlowSpec.` },
-    aspa: { ok: (l) => `Obiekt ASPA istnieje (providerzy: ${l}).`, brakOp: (op) => `Obiekt ASPA nie zawiera AS${op}. Po przekierowaniu ścieżka przez scrubbing center będzie uznana za nieprawidłową przez sieci walidujące ASPA — dodaj AS${op} do listy providerów.`, info: 'Brak obiektu ASPA. Nie jest wymagany; jeżeli go dodasz, umieść na liście także AS operatora scrubbing center.' },
+    aspa: { as0: (l) => `Obiekt ASPA mówi, że Twój AS nie ma providerów (AS0), a w BGP widać operatorów nadrzędnych: ${l}. Gdy sieci zaczną odrzucać trasy ASPA-invalid, każda trasa przez nich przepadnie — wpisz ich do ASPA.`, brakuje: (l) => `W ASPA brakuje AS widocznych w BGP jako Twoi operatorzy nadrzędni: ${l}. Jeśli to Twoi providerzy, dopisz ich — inaczej trasy przez nich będą ASPA-invalid. Jeśli to zwykli peerzy, nie dopisuj.`, niewidoczni: (l) => `W ASPA są AS, których dziś nie widać w BGP jako Twoich operatorów nadrzędnych: ${l}. To dobrze, jeśli to providerzy zapasowi; źle, jeśli to zwykli peerzy.`, propozycja: 'Brak obiektu ASPA. ASPA uzupełnia ROA: chroni przed podrobioną ścieżką AS i przed wyciekami tras, czego ROA nie robi. Poniżej gotowa propozycja z operatorami widocznymi w BGP.', ok: (l) => `Obiekt ASPA istnieje (providerzy: ${l}).`, brakOp: (op) => `Obiekt ASPA nie zawiera AS${op}. Po przekierowaniu ścieżka przez scrubbing center będzie uznana za nieprawidłową przez sieci walidujące ASPA — dodaj AS${op} do listy providerów.`, info: 'Brak obiektu ASPA. Nie jest wymagany; jeżeli go dodasz, umieść na liście także AS operatora scrubbing center.' },
     opRoa: { ok: (op) => `ROA dla AS${op} obejmują każdy /24 (/48).`, blok: (op, n) => `Operator ogłasza ze swojego AS, a ROA dla AS${op} nie obejmuje części prefiksów /24 (/48) (liczba: ${n}). Sieci walidujące RPKI odrzucą te ogłoszenia.` },
     nieaktualne: { zal: (l) => `Obiekty route z Twoim AS dla prefiksów, których nie ogłaszasz: ${l}. Usuń nieaktualne — bałagan w IRR utrudnia weryfikację u operatora.` },
     higiena: {
@@ -179,7 +180,8 @@ pl: {
     ['Pętle routingu', 'Jeżeli operator odsyła Ci bardziej szczegółowe prefiksy Twojej przestrzeni, odfiltruj je na sesji, żeby nie powstała pętla.'],
     ['Filtrowanie klientów', 'Filtruj trasy od klientów według ich AS-SET i obiektów route, a przed przyjęciem zbioru sprawdź jego rozmiar. Jedyną zaporą przed wyciekiem tras od klienta jest właśnie ten filtr.'],
     ['Test na sucho', 'Przetestuj przekierowanie jednego /24 poza atakiem i sprawdź w looking glass, czy prefiks jest widoczny i RPKI-valid.'],
-    ['RTBH', 'Do blokowania przez RTBH (prefiksy /32, community BLACKHOLE z RFC 7999) nie poszerzaj ROA — RFC 9319 §6 odradza to wprost. Przekierowanie do scrubbing center i RTBH to dwie osobne sprawy.']
+    ['RTBH', 'Do blokowania przez RTBH (prefiksy /32, community BLACKHOLE z RFC 7999) nie poszerzaj ROA — RFC 9319 §6 odradza to wprost. Przekierowanie do scrubbing center i RTBH to dwie osobne sprawy.'],
+    ['Walidacja ASPA na routerach', 'Gdy Twoje routery obsłużą ASPA: odrzucaj trasy invalid zamiast obniżać ich preferencję, dla klientów i peerów stosuj weryfikację upstream, dla providerów — downstream. Zacznij od logowania i uprzedź klientów, którzy nie wpisali Cię jako providera.']
   ],
   podstawa: [
     ['RFC 6811', 'stany walidacji pochodzenia: valid, invalid, brak ROA'],
@@ -195,10 +197,12 @@ pl: {
     ['MANRS', 'rejestracja w IRR i RPKI, aktualne kontakty; AS-SET jako opis stożka klientów (moduł 2)'],
     ['Lasse Jarlskov (Telia Company)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): cel AS-SET, rozmiar, kto Cię włącza'],
     ['Doug Madory, Job Snijders', '„The Scourge of Excessive AS-SETs” (2025): nadmiernie rozbudowane AS-SET i wycieki tras'],
+    ['Ondřej Caletka (RIPE NCC)', '„Autonomous System Provider Authorisation” (DKNOG16, 2026): kogo wpisać do ASPA, weryfikacja upstream i downstream'],
     ['Operatorzy', 'publiczna dokumentacja wdrożeniowa znanych operatorów scrubbing center: minimalny prefiks, ROA, IRR w bazie RIR, LOA, tunel']
   ],
   podstawaLink: 'Pełna lista źródeł z odnośnikami',
   obiektRoa: 'ROA do utworzenia w portalu RPKI Twojego RIR',
+  obiektAspa: 'Propozycja obiektu ASPA (sprawdź listę przed utworzeniem)',
   obiektRoute: 'Obiekty route (RPSL)',
   stopka: 'Wynik ma charakter informacyjny i opiera się na danych publicznych z chwili sprawdzenia. Ostateczne wymagania ustala operator scrubbing center.'
 },
@@ -225,7 +229,7 @@ en: {
   sprawdz: 'Check',
   sprawdzam: 'Checking…',
   czas: 'Results in a few seconds. Your browser fetches the data from public services (including the RIPE Database, IRR registries and PeeringDB).',
-  wersja: 'Version 1.1.0 · 17 October 2026',
+  wersja: 'Version 1.2.0 · 19 October 2026',
   itoroNad: 'Tools provided by ITORO',
   itoroH2: 'We improve the security of your network',
   itoroP1: 'We deploy and operate DDoS protection systems, mainly in telecommunications networks and data centres.',
@@ -268,6 +272,7 @@ en: {
     loa: ['List the prefixes from this step and the holder of each (RIR database data).', 'Ask the address holder — and the upstream, if it announces the prefix — to sign an LOA based on the template below.', 'Operators usually accept the LOA as a PDF on company letterhead, signed by an authorised person.'],
     asset: ['Rule of thumb: put in your AS-SET only what you re-advertise in BGP — yourself and your customers. Do not add IXPs or peers.', 'Check the size of a customer\'s AS-SET before including it; remove customers who left and review the set regularly.'],
     wlaczenia: ['Review the sets listed in this step. The owner is in the as-set object (mnt-by, admin-c) in the IRR.', 'If a set belongs to a network you have no BGP relationship with, ask for your AS to be removed. If there is no answer, report it to the IRR operator.', 'Publish an ASPA listing your upstreams — it limits spoofing of your AS through other networks\' AS-SETs.', 'Set up ongoing monitoring of new AS-SETs that reference your AS.'],
+    aspa: ['List all your providers, backup ones too, even if they are not visible in the AS path today.', 'Do not list plain peers, unless one of them acts as a provider for you.', 'List the non-transparent IXP route servers you use — otherwise their AS is seen as a valley in the path.', 'Update ASPA together with the IRR: every change of transit provider is a change in both places.'],
     pdb: ['Log in to peeringdb.com and open your network record.', 'In „IRR as-set/route-set”, enter your AS-SET with its source, e.g. RIPE::AS64496:AS-CUSTOMERS.', 'Save and check that it matches your aut-num.'],
     inne: []
   },
@@ -312,7 +317,7 @@ en: {
     assetHier: { ok: (s) => `${s} has a hierarchical name.`, zal: (s) => `${s} has a short name. New sets should be prefixed with the AS (e.g. AS64496:AS-CUSTOMERS, RFC 2622) — this protects against impersonation in other registries.` },
     pdb: { ok: (s) => `PeeringDB: record exists, AS-SET ${s}.`, zal: 'No PeeringDB record or empty AS-SET field. Many operators build filters from the AS-SET in PeeringDB.', roz: (a, b) => `AS-SET in PeeringDB (${a}) differs from AS-SET in aut-num (${b}).` },
     upstream: { ok: (n) => `Upstreams visible in BGP: ${n}.`, zal: (n) => `Only ${n} upstream visible. With a single link the attack saturates it before diversion takes effect — consider a second link or upstream RTBH and BGP FlowSpec.` },
-    aspa: { ok: (l) => `ASPA object exists (providers: ${l}).`, brakOp: (op) => `The ASPA object does not include AS${op}. After diversion the path through the scrubbing centre will be invalid for ASPA-validating networks — add AS${op} to the provider list.`, info: 'No ASPA object. It is not required; if you add one, include the scrubbing centre\'s AS as a provider.' },
+    aspa: { as0: (l) => `Your ASPA object says your AS has no providers (AS0), yet BGP shows upstreams: ${l}. Once networks reject ASPA-invalid routes, every route through them will be lost — list them in your ASPA.`, brakuje: (l) => `Your ASPA is missing ASes visible in BGP as your upstreams: ${l}. If they are your providers, add them — otherwise routes through them will be ASPA-invalid. If they are just peers, do not add them.`, niewidoczni: (l) => `Your ASPA lists ASes not visible in BGP as your upstreams today: ${l}. That is fine for backup providers, wrong for plain peers.`, propozycja: 'No ASPA object. ASPA complements ROAs: it protects against forged AS paths and route leaks, which ROAs do not. A ready proposal with the upstreams visible in BGP is below.', ok: (l) => `ASPA object exists (providers: ${l}).`, brakOp: (op) => `The ASPA object does not include AS${op}. After diversion the path through the scrubbing centre will be invalid for ASPA-validating networks — add AS${op} to the provider list.`, info: 'No ASPA object. It is not required; if you add one, include the scrubbing centre\'s AS as a provider.' },
     opRoa: { ok: (op) => `ROAs for AS${op} cover every /24 (/48).`, blok: (op, n) => `The operator announces from its own AS, but no ROA for AS${op} covers ${n} /24 (/48) prefixes. RPKI-validating networks will drop these announcements.` },
     nieaktualne: { zal: (l) => `Route objects with your AS for prefixes you do not announce: ${l}. Remove stale ones — clutter in the IRR complicates verification.` },
     higiena: {
@@ -372,7 +377,8 @@ en: {
     ['Routing loops', 'If the operator sends back more specific prefixes of your space, filter them on the session to avoid a loop.'],
     ['Customer filtering', 'Filter customer routes by their AS-SET and route objects, and check the set\'s size before accepting it. That filter is the only barrier against a customer route leak.'],
     ['Dry run', 'Test diverting one /24 outside an attack and check in a looking glass that it is visible and RPKI-valid.'],
-    ['RTBH', 'Do not widen ROAs for RTBH (/32 prefixes, BLACKHOLE community from RFC 7999) — RFC 9319 §6 advises against it. Diversion to a scrubbing centre and RTBH are separate matters.']
+    ['RTBH', 'Do not widen ROAs for RTBH (/32 prefixes, BLACKHOLE community from RFC 7999) — RFC 9319 §6 advises against it. Diversion to a scrubbing centre and RTBH are separate matters.'],
+    ['ASPA validation on your routers', 'Once your routers support ASPA: reject invalid routes instead of lowering their preference, use upstream verification for customers and peers and downstream verification for providers. Start with logging and warn customers who did not list you as a provider.']
   ],
   podstawa: [
     ['RFC 6811', 'origin validation states: valid, invalid, not found'],
@@ -388,10 +394,12 @@ en: {
     ['MANRS', 'IRR and RPKI registration, up-to-date contacts; AS-SET as the customer cone (module 2)'],
     ['Lasse Jarlskov (Telia Company)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): AS-SET purpose, size, who includes you'],
     ['Doug Madory, Job Snijders', '„The Scourge of Excessive AS-SETs” (2025): oversized AS-SETs and route leaks'],
+    ['Ondřej Caletka (RIPE NCC)', '„Autonomous System Provider Authorisation” (DKNOG16, 2026): whom to list in ASPA, upstream and downstream verification'],
     ['Operators', 'public onboarding documentation of well-known scrubbing centre operators: minimum prefix, ROA, IRR in a RIR database, LOA, tunnel']
   ],
   podstawaLink: 'Full list of sources with links',
   obiektRoa: "ROAs to create in your RIR's RPKI portal",
+  obiektAspa: 'Proposed ASPA object (review the list before creating it)',
   obiektRoute: 'Route objects (RPSL)',
   stopka: 'The result is for information only and is based on public data at the time of the check. Final requirements are set by the scrubbing centre operator.'
 }

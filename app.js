@@ -453,12 +453,37 @@ async function analizuj(asn, opAsn, tryb, postep) {
     else dodajAs('upstream', 'zal', N.t.upstream.zal(lewi.length));
   }
 
-  // ASPA
+  /* ── ASPA ──────────────────────────────────────────────
+     Według: Ondřej Caletka (RIPE NCC), „Autonomous System Provider
+     Authorisation”, DKNOG16 (2026). „left” w RIPEstat to AS stojący
+     w ścieżkach bliżej kolektora: zwykle provider, czasem peer — dlatego
+     komunikaty każą sprawdzić, a nie przesądzają. */
   const prov = aspa ? (aspa.providers || aspa.providerASIDs || aspa.provider_asids || []).map(x => +String(x.asn || x.providerASID || x).replace(/^AS/i, '')) : [];
+  const lewiAsn = [...new Set(lewi.map(n => +n.asn))].filter(x => x && x !== asn);
+  const bezProviderow = prov.length > 0 && prov.every(x => x === 0);   // ASPA „provider-free” (AS0)
+  // Przy wielu sąsiadach „left” (np. anycast obecny na wielu IXP) to w większości peerzy, nie providerzy:
+  // wtedy nie generujemy listy i nie oznaczamy braków jako błędu.
+  const duzoSasiadow = lewiAsn.length > 10;
+  const lista8 = l => l.slice(0, 12).map(x => 'AS' + x).join(', ') + (l.length > 12 ? ` (+${l.length - 12})` : '');
   if (aspa && prov.length) {
     dodajAs('aspa', 'ok', N.t.aspa.ok(prov.map(x => 'AS' + x).join(', ')));
+    if (bezProviderow && lewiAsn.length) {
+      dodajAs('aspaAs0', 'blok', N.t.aspa.as0(lista8(lewiAsn)));
+    } else if (sasiedzi) {
+      const brakuje = lewiAsn.filter(x => !prov.includes(x));
+      if (brakuje.length) dodajAs(duzoSasiadow ? 'aspaBrakujeInfo' : 'aspaBrakuje', duzoSasiadow ? 'info' : 'popr', N.t.aspa.brakuje(lista8(brakuje)));
+      const niewidoczni = prov.filter(x => x !== 0 && !lewiAsn.includes(x) && x !== opAsn);
+      if (niewidoczni.length) dodajAs('aspaNiewidoczni', 'info', N.t.aspa.niewidoczni(lista8(niewidoczni)));
+    }
     if (opAsn && !prov.includes(opAsn)) dodajAs('aspaOp', 'blok', N.t.aspa.brakOp(opAsn));
-  } else if (roaAs) dodajAs('aspa', 'info', N.t.aspa.info);
+  } else if (roaAs) {
+    if (lewiAsn.length && !duzoSasiadow) dodajAs('aspaBrak', 'zal', N.t.aspa.propozycja);
+    else dodajAs('aspa', 'info', N.t.aspa.info);
+  }
+  // Gotowa propozycja obiektu ASPA: dotychczasowi providerzy + widoczni w BGP + AS operatora scrubbing center.
+  const wymagaPoprawy = !aspa || W.testyAs.some(t => ['aspaBrakuje', 'aspaAs0', 'aspaOp'].includes(t.id));
+  const propozycja = [...new Set([...(bezProviderow ? [] : prov.filter(x => x !== 0)), ...lewiAsn, ...(opAsn ? [opAsn] : [])])].sort((x, y) => x - y);
+  if (wymagaPoprawy && propozycja.length && !duzoSasiadow) W.aspaPropozycja = `AS${asn} => [ ${propozycja.map(x => 'AS' + x).join(', ')} ]`;
 
   // ROA operatora (gdy ogłasza ze swojego AS)
   let roaOp = [];
@@ -649,7 +674,7 @@ function podsumuj(W) {
   const obce = W.prefiksy.flatMap(p => (p.obce || []).map(x => `${p.prefiks} AS${x.asn} (${x.db})`));
   if (obce.length) dodaj('usun', W.prefiksy.some(p => (p.obce || []).some(x => x.inv)) ? 'popr' : 'zal', N.f.usun(obce.length), obce.slice(0, 12));
   if ((l = zPref('wlasciciel').concat(zPref('nadrzedny'))).length) dodaj('loa', 'popr', N.f.loa(lista([...new Set(l)])));
-  const TYP_AS = { aspaOp: 'aspa', abuse: 'abuse', autnum: 'asset', eksport: 'asset', asset: 'asset', assetZrodlo: 'asset', assetHier: 'asset', assetBrak: 'asset', pdb: 'pdb', pdbRoz: 'pdb', nieaktualne: 'usun', upstream: 'inne', opRoa: 'roaOp', asetRozmiar: 'asset', asetGlebokosc: 'asset', asetSkladowe: 'asset', asetIxp: 'asset', asetNieaktualni: 'asset', wlaczeniaObce: 'wlaczenia', wlaczeniaIxp: 'wlaczenia', wlaczeniaNieznane: 'wlaczenia' };
+  const TYP_AS = { aspaOp: 'aspa', aspaAs0: 'aspa', aspaBrakuje: 'aspa', aspaBrak: 'aspa', abuse: 'abuse', autnum: 'asset', eksport: 'asset', asset: 'asset', assetZrodlo: 'asset', assetHier: 'asset', assetBrak: 'asset', pdb: 'pdb', pdbRoz: 'pdb', nieaktualne: 'usun', upstream: 'inne', opRoa: 'roaOp', asetRozmiar: 'asset', asetGlebokosc: 'asset', asetSkladowe: 'asset', asetIxp: 'asset', asetNieaktualni: 'asset', wlaczeniaObce: 'wlaczenia', wlaczeniaIxp: 'wlaczenia', wlaczeniaNieznane: 'wlaczenia' };
   W.testyAs.filter(t => t.st === 'blok' || t.st === 'popr' || t.st === 'zal').filter(t => t.id !== 'opRoa').forEach(t => dodaj(TYP_AS[t.id] || 'inne', t.st, t.tekst));
 
   const KOLEJNOSC = ['dlugosc', 'roa', 'roaOp', 'aspa', 'route', 'usun', 'loa', 'asset', 'wlaczenia', 'abuse', 'pdb', 'inne'];
@@ -758,6 +783,7 @@ function rysujPlan(W) {
     if ((k.typ === 'roa' || k.typ === 'roaOp') && !roaPokazany && roaT) { kod = blokKopiuj(N.obiektRoa, roaT); roaPokazany = true; }
     if (k.typ === 'route' && routeT) kod = blokKopiuj(N.obiektRoute, routeT);
     if (k.typ === 'loa' && loaT) kod = blokKopiuj(N.loaTytul, loaT);
+    if (k.typ === 'aspa' && W.aspaPropozycja) kod = blokKopiuj(N.obiektAspa, W.aspaPropozycja);
     const jak = rirs.map((r, j) => {
       const g = N.rir[r][klucz];
       return `<details class="jak"${j === 0 ? ' open' : ''}><summary>${esc(N.jakW(N.rir[r].nazwa))}</summary><ol>${g.kroki.map(x => `<li>${esc(x)}</li>`).join('')}</ol><p class="drobne"><a href="${esc(g.link)}" target="_blank" rel="noopener">${esc(N.dokumentacja)} ↗</a></p></details>`;

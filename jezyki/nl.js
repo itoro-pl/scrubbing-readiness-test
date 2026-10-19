@@ -21,7 +21,7 @@ window.NAPISY.nl = {
   sprawdz: 'Controleren',
   sprawdzam: 'Bezig met controleren…',
   czas: 'Resultaat binnen enkele seconden. Uw browser haalt de gegevens op bij openbare diensten (o.a. de RIPE Database, IRR-registers en PeeringDB).',
-  wersja: 'Versie 1.1.0 · 17 oktober 2026',
+  wersja: 'Versie 1.2.0 · 19 oktober 2026',
   itoroNad: 'Tools aangeboden door ITORO',
   itoroH2: 'Wij verbeteren de beveiliging van uw netwerk',
   itoroP1: 'Wij implementeren en beheren DDoS-beschermingssystemen, vooral in netwerken van telecomoperators en in datacenters.',
@@ -64,6 +64,7 @@ window.NAPISY.nl = {
     loa: ['Maak een lijst van de prefixen uit deze stap en de houder van elk prefix (gegevens uit de RIR-database).', 'Vraag de houder van de adresruimte — en de upstream, als die het prefix aankondigt — een LOA te ondertekenen volgens het onderstaande sjabloon.', 'Operators accepteren de LOA meestal als pdf op briefpapier van het bedrijf, ondertekend door een bevoegd persoon.'],
     asset: ['Vuistregel: neem in uw AS-SET alleen op wat u in BGP doorgeeft — uzelf en uw klanten. Voeg geen IXP\'s of peers toe.', 'Controleer de omvang van de AS-SET van een klant voordat u die opneemt; verwijder vertrokken klanten en controleer de set regelmatig.'],
     wlaczenia: ['Bekijk de sets die in deze stap worden genoemd. De eigenaar staat in het as-set-object (mnt-by, admin-c) in de IRR.', 'Hoort een set bij een netwerk waarmee u geen BGP-relatie hebt, vraag dan om uw AS te verwijderen. Komt er geen antwoord, meld het dan bij de beheerder van de IRR-database.', 'Publiceer een ASPA met uw upstreams — dat beperkt misbruik van uw AS via AS-SETs van andere netwerken.', 'Zet doorlopende monitoring op van nieuwe AS-SETs die naar uw AS verwijzen.'],
+    aspa: ['Neem al uw providers op, ook backup-providers, zelfs als ze vandaag niet in het AS-pad zichtbaar zijn.', 'Neem geen gewone peers op, tenzij een van hen voor u als provider optreedt.', 'Neem niet-transparante IXP-route-servers op die u gebruikt — anders wordt hun AS als dal in het pad gezien.', 'Werk ASPA samen met het IRR bij: elke wissel van transitprovider is een wijziging op beide plaatsen.'],
     pdb: ['Log in op peeringdb.com en open het record van uw netwerk (Network).', 'Vul bij „IRR as-set/route-set” uw AS-SET met bron in, bijv. RIPE::AS64496:AS-KLANTEN.', 'Sla op en controleer of het overeenkomt met uw aut-num.'],
     inne: []
   },
@@ -108,7 +109,7 @@ window.NAPISY.nl = {
     assetHier: { ok: (s) => `${s} heeft een hiërarchische naam.`, zal: (s) => `${s} heeft een korte naam. Nieuwe sets krijgen bij voorkeur het AS als voorvoegsel (bijv. AS64496:AS-KLANTEN, RFC 2622) — dat beschermt tegen imitatie in andere registers.` },
     pdb: { ok: (s) => `PeeringDB: record aanwezig, AS-SET ${s}.`, zal: 'Geen PeeringDB-record of leeg AS-SET-veld. Veel operators bouwen filters op basis van de AS-SET in PeeringDB.', roz: (a, b) => `AS-SET in PeeringDB (${a}) wijkt af van AS-SET in aut-num (${b}).` },
     upstream: { ok: (n) => `Upstreams zichtbaar in BGP: ${n}.`, zal: (n) => `Slechts ${n} upstream zichtbaar. Met één verbinding verzadigt de aanval die voordat de omleiding werkt — overweeg een tweede verbinding of RTBH en BGP FlowSpec bij de upstream.` },
-    aspa: { ok: (l) => `ASPA-object aanwezig (providers: ${l}).`, brakOp: (op) => `Het ASPA-object bevat AS${op} niet. Na omleiding is het pad via het scrubbingcentrum ongeldig voor ASPA-validerende netwerken — voeg AS${op} toe aan de providerlijst.`, info: 'Geen ASPA-object. Het is niet verplicht; als u er een aanmaakt, neem dan ook het AS van het scrubbingcentrum op als provider.' },
+    aspa: { as0: (l) => `Uw ASPA-object zegt dat uw AS geen providers heeft (AS0), maar in BGP zijn upstreams zichtbaar: ${l}. Zodra netwerken ASPA-invalid routes weigeren, gaan alle routes via hen verloren — neem ze op in uw ASPA.`, brakuje: (l) => `In uw ASPA ontbreken AS die in BGP zichtbaar zijn als uw upstreams: ${l}. Zijn het uw providers, voeg ze dan toe — anders worden routes via hen ASPA-invalid. Zijn het gewone peers, voeg ze dan niet toe.`, niewidoczni: (l) => `Uw ASPA bevat AS die vandaag in BGP niet zichtbaar zijn als uw upstreams: ${l}. Voor backup-providers is dat juist, voor gewone peers niet.`, propozycja: 'Geen ASPA-object. ASPA vult ROA\'s aan: het beschermt tegen vervalste AS-paden en route leaks, wat ROA\'s niet doen. Hieronder staat een kant-en-klaar voorstel met de upstreams die in BGP zichtbaar zijn.', ok: (l) => `ASPA-object aanwezig (providers: ${l}).`, brakOp: (op) => `Het ASPA-object bevat AS${op} niet. Na omleiding is het pad via het scrubbingcentrum ongeldig voor ASPA-validerende netwerken — voeg AS${op} toe aan de providerlijst.`, info: 'Geen ASPA-object. Het is niet verplicht; als u er een aanmaakt, neem dan ook het AS van het scrubbingcentrum op als provider.' },
     opRoa: { ok: (op) => `ROA\'s voor AS${op} dekken elke /24 (/48).`, blok: (op, n) => `De operator kondigt aan vanuit zijn eigen AS, maar voor ${n} /24-(/48-)prefixen is er geen ROA voor AS${op}. RPKI-validerende netwerken zullen deze aankondigingen verwerpen.` },
     nieaktualne: { zal: (l) => `Route-objecten met uw AS voor prefixen die u niet aankondigt: ${l}. Verwijder verouderde objecten — rommel in de IRR bemoeilijkt de verificatie.` },
     higiena: {
@@ -168,7 +169,8 @@ window.NAPISY.nl = {
     ['Routinglussen', 'Als de operator meer specifieke prefixen van uw adresruimte naar u terugstuurt, filter die dan op de sessie om een lus te voorkomen.'],
     ['Filtering van klanten', 'Filter klantroutes op basis van hun AS-SET en route-objecten, en controleer de omvang van de set voordat u die accepteert. Dat filter is de enige barrière tegen een route leak van een klant.'],
     ['Proefrun', 'Test de omleiding van één /24 buiten een aanval en controleer in een looking glass of het prefix zichtbaar en RPKI-valid is.'],
-    ['RTBH', 'Verruim ROA\'s niet voor RTBH (/32-prefixen, BLACKHOLE-community uit RFC 7999) — RFC 9319 §6 raadt dat uitdrukkelijk af. Omleiding naar een scrubbingcentrum en RTBH zijn twee aparte zaken.']
+    ['RTBH', 'Verruim ROA\'s niet voor RTBH (/32-prefixen, BLACKHOLE-community uit RFC 7999) — RFC 9319 §6 raadt dat uitdrukkelijk af. Omleiding naar een scrubbingcentrum en RTBH zijn twee aparte zaken.'],
+    ['ASPA-validatie op uw routers', 'Zodra uw routers ASPA ondersteunen: weiger invalide routes in plaats van hun voorkeur te verlagen, gebruik upstream-verificatie voor klanten en peers en downstream-verificatie voor providers. Begin met loggen en waarschuw klanten die u niet als provider hebben opgenomen.']
   ],
   podstawa: [
     ['RFC 6811', 'statussen van origin-validatie: valid, invalid, not found'],
@@ -184,10 +186,12 @@ window.NAPISY.nl = {
     ['MANRS', 'registratie in IRR en RPKI, actuele contactgegevens; AS-SET als beschrijving van de customer cone (module 2)'],
     ['Lasse Jarlskov (Telia Company)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): doel van de AS-SET, omvang, wie u opneemt'],
     ['Doug Madory, Job Snijders', '„The Scourge of Excessive AS-SETs” (2025): te grote AS-SETs en route leaks'],
+    ['Ondřej Caletka (RIPE NCC)', '„Autonomous System Provider Authorisation” (DKNOG16, 2026): wie in ASPA hoort, upstream- en downstream-verificatie'],
     ['Operators', 'openbare onboardingdocumentatie van bekende scrubbingcentra: minimale prefixlengte, ROA, IRR in een RIR-database, LOA, tunnel']
   ],
   podstawaLink: 'Volledige bronnenlijst met links',
   obiektRoa: 'ROA\'s om aan te maken in het RPKI-portaal van uw RIR',
+  obiektAspa: 'Voorgesteld ASPA-object (controleer de lijst voordat u het aanmaakt)',
   obiektRoute: 'Route-objecten (RPSL)',
   stopka: 'Het resultaat is uitsluitend informatief en gebaseerd op openbare gegevens op het moment van de controle. De definitieve eisen worden bepaald door de operator van het scrubbingcentrum.'
 };

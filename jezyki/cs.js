@@ -21,7 +21,7 @@ window.NAPISY.cs = {
   sprawdz: 'Ověřit',
   sprawdzam: 'Ověřuji…',
   czas: 'Výsledek během několika sekund. Data stahuje váš prohlížeč z veřejných služeb (mimo jiné z databáze RIPE, registrů IRR a PeeringDB).',
-  wersja: 'Verze 1.1.0 · 17. října 2026',
+  wersja: 'Verze 1.2.0 · 19. října 2026',
   itoroNad: 'Nástroje poskytuje ITORO',
   itoroH2: 'Zvyšujeme bezpečnost vaší sítě',
   itoroP1: 'Nasazujeme a provozujeme systémy ochrany před DDoS útoky, především v sítích telekomunikačních operátorů a v datových centrech.',
@@ -64,6 +64,7 @@ window.NAPISY.cs = {
     loa: ['Sestavte seznam prefixů z tohoto kroku a držitele každého z nich (data z databáze RIR).', 'Požádejte držitele adresního prostoru — a pokud prefix oznamuje nadřazený operátor, také jeho — o podpis LOA podle níže uvedeného vzoru.', 'Operátoři obvykle přijímají LOA jako PDF na hlavičkovém papíře firmy, podepsané oprávněnou osobou.'],
     asset: ['Zásada: do AS-SET dávejte jen to, co dál oznamujete v BGP, tedy sebe a své zákazníky. Nepřidávejte IXP ani peery.', 'Než zahrnete AS-SET zákazníka, ověřte jeho velikost; odebírejte zákazníky, kteří odešli, a sadu pravidelně kontrolujte.'],
     wlaczenia: ['Projděte seznam sad z tohoto kroku. Vlastníka najdete v objektu as-set (mnt-by, admin-c) v databázi IRR.', 'Pokud sada patří síti, se kterou nemáte vztah BGP, požádejte o odebrání svého AS. Pokud nereaguje, nahlaste to provozovateli databáze IRR.', 'Zveřejněte ASPA se seznamem svých nadřazených operátorů — omezuje to zneužití vašeho AS prostřednictvím cizích AS-SET.', 'Zaveďte trvalé sledování nových AS-SET, které odkazují na váš AS.'],
+    aspa: ['Uveďte všechny své providery, i záložní, i když dnes nejsou vidět v cestě AS.', 'Neuvádějte běžné peery, pokud některý z nich vůči vám nefunguje jako provider.', 'Uveďte netransparentní route servery IXP, které používáte — jinak bude jejich AS považován za údolí v cestě.', 'Aktualizujte ASPA spolu s IRR: každá změna tranzitního operátora je změna na obou místech.'],
     pdb: ['Přihlaste se na peeringdb.com a otevřete záznam své sítě (Network).', 'Do pole „IRR as-set/route-set” zadejte svůj AS-SET včetně zdroje, např. RIPE::AS64496:AS-ZAKAZNICI.', 'Uložte a ověřte, že pole odpovídá aut-num.'],
     inne: []
   },
@@ -108,7 +109,7 @@ window.NAPISY.cs = {
     assetHier: { ok: (s) => `${s} má hierarchický název.`, zal: (s) => `${s} má krátký název. Nové sady se zakládají s prefixem AS (např. AS64496:AS-ZAKAZNICI, RFC 2622) — to chrání před zneužitím názvu v jiných registrech.` },
     pdb: { ok: (s) => `PeeringDB: záznam existuje, AS-SET ${s}.`, zal: 'Chybí záznam v PeeringDB nebo je pole AS-SET prázdné. Mnoho operátorů sestavuje filtry z AS-SET v PeeringDB.', roz: (a, b) => `AS-SET v PeeringDB (${a}) se liší od AS-SET v aut-num (${b}).` },
     upstream: { ok: (n) => `Počet nadřazených operátorů viditelných v BGP: ${n}.`, zal: (n) => `Viditelný je jen ${n} nadřazený operátor. Při jediné lince ji útok zahltí dřív, než přesměrování začne fungovat — zvažte druhou linku nebo RTBH a BGP FlowSpec u operátora.` },
-    aspa: { ok: (l) => `Objekt ASPA existuje (provideři: ${l}).`, brakOp: (op) => `Objekt ASPA neobsahuje AS${op}. Po přesměrování budou sítě validující ASPA považovat cestu přes scrubbing centrum za neplatnou — přidejte AS${op} do seznamu providerů.`, info: 'Objekt ASPA chybí. Není povinný; pokud ho vytvoříte, uveďte mezi providery i AS scrubbing centra.' },
+    aspa: { as0: (l) => `Váš objekt ASPA uvádí, že váš AS nemá žádné providery (AS0), ale v BGP jsou vidět nadřazení operátoři: ${l}. Jakmile sítě začnou zahazovat trasy ASPA-invalid, všechny trasy přes ně se ztratí — uveďte je ve svém ASPA.`, brakuje: (l) => `Ve vašem ASPA chybí AS viditelné v BGP jako vaši nadřazení operátoři: ${l}. Pokud jsou to vaši provideři, doplňte je — jinak budou trasy přes ně ASPA-invalid. Pokud jde jen o peery, nedoplňujte je.`, niewidoczni: (l) => `Vaše ASPA obsahuje AS, které dnes v BGP nejsou vidět jako vaši nadřazení operátoři: ${l}. U záložních providerů je to v pořádku, u běžných peerů ne.`, propozycja: 'Objekt ASPA chybí. ASPA doplňuje ROA: chrání před podvrženou cestou AS a před úniky tras, což ROA nedělá. Níže je hotový návrh s nadřazenými operátory viditelnými v BGP.', ok: (l) => `Objekt ASPA existuje (provideři: ${l}).`, brakOp: (op) => `Objekt ASPA neobsahuje AS${op}. Po přesměrování budou sítě validující ASPA považovat cestu přes scrubbing centrum za neplatnou — přidejte AS${op} do seznamu providerů.`, info: 'Objekt ASPA chybí. Není povinný; pokud ho vytvoříte, uveďte mezi providery i AS scrubbing centra.' },
     opRoa: { ok: (op) => `ROA pro AS${op} pokrývají každý /24 (/48).`, blok: (op, n) => `Operátor oznamuje ze svého AS, ale ROA pro AS${op} nepokrývá část prefixů /24 (/48) (počet: ${n}). Sítě validující RPKI tato oznámení zahodí.` },
     nieaktualne: { zal: (l) => `Objekty route s vaším AS pro prefixy, které neoznamujete: ${l}. Zastaralé odstraňte — nepořádek v IRR ztěžuje ověření u operátora.` },
     higiena: {
@@ -168,7 +169,8 @@ window.NAPISY.cs = {
     ['Smyčky ve směrování', 'Pokud vám operátor posílá zpět specifičtější prefixy vašeho prostoru, odfiltrujte je na session, aby nevznikla smyčka.'],
     ['Filtrování zákazníků', 'Filtrujte trasy od zákazníků podle jejich AS-SET a objektů route a před přijetím sady ověřte její velikost. Jedinou ochranou proti úniku tras od zákazníka je právě tento filtr.'],
     ['Zkouška nanečisto', 'Otestujte přesměrování jednoho /24 mimo útok a v looking glass ověřte, že je prefix viditelný a RPKI-valid.'],
-    ['RTBH', 'Kvůli RTBH (prefixy /32, community BLACKHOLE z RFC 7999) ROA nerozšiřujte — RFC 9319 §6 to výslovně nedoporučuje. Přesměrování do scrubbing centra a RTBH jsou dvě samostatné věci.']
+    ['RTBH', 'Kvůli RTBH (prefixy /32, community BLACKHOLE z RFC 7999) ROA nerozšiřujte — RFC 9319 §6 to výslovně nedoporučuje. Přesměrování do scrubbing centra a RTBH jsou dvě samostatné věci.'],
+    ['Validace ASPA na vašich routerech', 'Až budou vaše routery ASPA podporovat: zahazujte nevalidní trasy místo snižování jejich preference, pro zákazníky a peery používejte upstream verifikaci, pro providery downstream. Začněte logováním a upozorněte zákazníky, kteří vás neuvedli jako providera.']
   ],
   podstawa: [
     ['RFC 6811', 'stavy validace originu: valid, invalid, bez ROA'],
@@ -184,10 +186,12 @@ window.NAPISY.cs = {
     ['MANRS', 'registrace v IRR a RPKI, aktuální kontakty; AS-SET jako popis zákaznického kužele (modul 2)'],
     ['Lasse Jarlskov (Telia Company)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): účel AS-SET, velikost, kdo vás zahrnuje'],
     ['Doug Madory, Job Snijders', '„The Scourge of Excessive AS-SETs” (2025): přerostlé AS-SET a úniky tras'],
+    ['Ondřej Caletka (RIPE NCC)', '„Autonomous System Provider Authorisation” (DKNOG16, 2026): koho uvést v ASPA, upstream a downstream verifikace'],
     ['Operátoři', 'veřejná dokumentace pro zavedení služby u známých operátorů scrubbing center: minimální prefix, ROA, IRR v databázi RIR, LOA, tunel']
   ],
   podstawaLink: 'Úplný seznam zdrojů s odkazy',
   obiektRoa: 'ROA k vytvoření v RPKI portálu vašeho RIR',
+  obiektAspa: 'Návrh objektu ASPA (před vytvořením seznam zkontrolujte)',
   obiektRoute: 'Objekty route (RPSL)',
   stopka: 'Výsledek má pouze informativní charakter a vychází z veřejných dat v okamžiku ověření. Konečné požadavky stanovuje operátor scrubbing centra.'
 };

@@ -21,7 +21,7 @@ window.NAPISY.pt = {
   sprawdz: 'Verificar',
   sprawdzam: 'Verificando…',
   czas: 'Resultado em poucos segundos. O seu navegador obtém os dados de serviços públicos (incluindo a base de dados do RIPE, os registros IRR e o PeeringDB).',
-  wersja: 'Versão 1.1.0 · 17 de outubro de 2026',
+  wersja: 'Versão 1.2.0 · 19 de outubro de 2026',
   itoroNad: 'Ferramentas disponibilizadas pela ITORO',
   itoroH2: 'Melhoramos a segurança da sua rede',
   itoroP1: 'Implantamos e operamos sistemas de proteção contra DDoS, principalmente em redes de operadoras de telecomunicações e em data centers.',
@@ -64,6 +64,7 @@ window.NAPISY.pt = {
     loa: ['Liste os prefixos deste passo e o titular de cada um (dados da base do RIR).', 'Peça ao titular dos endereços — e ao upstream, se for ele quem anuncia o prefixo — que assine uma LOA com base no modelo abaixo.', 'Os operadores costumam aceitar a LOA em PDF, em papel timbrado da empresa, assinada por uma pessoa autorizada.'],
     asset: ['Regra prática: coloque no seu AS-SET apenas o que você reanuncia via BGP — você mesmo e os seus clientes. Não adicione IXPs nem peers.', 'Verifique o tamanho do AS-SET de um cliente antes de incluí-lo; remova clientes que saíram e revise o conjunto regularmente.'],
     wlaczenia: ['Revise os conjuntos listados neste passo. O titular consta no objeto as-set (mnt-by, admin-c) no IRR.', 'Se um conjunto pertence a uma rede com a qual você não tem relação BGP, peça a remoção do seu AS. Se não houver resposta, reporte ao operador da base IRR.', 'Publique um ASPA com os seus upstreams — isso limita a falsificação do seu AS por meio de AS-SET de outras redes.', 'Configure um monitoramento contínuo de novos AS-SET que façam referência ao seu AS.'],
+    aspa: ['Inclua todos os seus provedores, também os de backup, mesmo que hoje não apareçam no caminho de AS.', 'Não inclua simples peers, a menos que algum deles atue como provedor para você.', 'Inclua os route servers não transparentes dos IXP que você usa — caso contrário, o AS deles será visto como um vale no caminho.', 'Atualize o ASPA junto com o IRR: cada troca de provedor de trânsito é uma alteração nos dois lugares.'],
     pdb: ['Faça login em peeringdb.com e abra o registro da sua rede.', 'Em “IRR as-set/route-set”, informe o seu AS-SET com a origem, ex.: RIPE::AS64496:AS-CLIENTES.', 'Salve e verifique se coincide com o seu aut-num.'],
     inne: []
   },
@@ -108,7 +109,7 @@ window.NAPISY.pt = {
     assetHier: { ok: (s) => `${s} tem nome hierárquico.`, zal: (s) => `${s} tem nome curto. Conjuntos novos devem ter o AS como prefixo (ex.: AS64496:AS-CLIENTES, RFC 2622) — isso protege contra falsificação em outros registros.` },
     pdb: { ok: (s) => `PeeringDB: o registro existe, AS-SET ${s}.`, zal: 'Não há registro no PeeringDB ou o campo AS-SET está vazio. Muitos operadores montam filtros a partir do AS-SET do PeeringDB.', roz: (a, b) => `O AS-SET no PeeringDB (${a}) difere do AS-SET no aut-num (${b}).` },
     upstream: { ok: (n) => `Upstreams visíveis no BGP: ${n}.`, zal: (n) => `Apenas ${n} upstream visível. Com um único link, o ataque o satura antes que o desvio entre em vigor — considere um segundo link ou RTBH e BGP FlowSpec com o upstream.` },
-    aspa: { ok: (l) => `O objeto ASPA existe (provedores: ${l}).`, brakOp: (op) => `O objeto ASPA não inclui o AS${op}. Após o desvio, o caminho pelo centro de scrubbing será inválido para as redes que validam ASPA — adicione o AS${op} à lista de provedores.`, info: 'Não há objeto ASPA. Não é obrigatório; se criar um, inclua também o AS do centro de scrubbing como provedor.' },
+    aspa: { as0: (l) => `Seu objeto ASPA diz que seu AS não tem provedores (AS0), mas o BGP mostra upstreams: ${l}. Quando as redes passarem a rejeitar rotas ASPA-invalid, todas as rotas por eles serão perdidas — inclua-os no seu ASPA.`, brakuje: (l) => `Faltam no seu ASPA AS visíveis no BGP como seus upstreams: ${l}. Se forem seus provedores, adicione-os — caso contrário, as rotas por eles serão ASPA-invalid. Se forem apenas peers, não os adicione.`, niewidoczni: (l) => `Seu ASPA inclui AS que hoje não aparecem no BGP como seus upstreams: ${l}. Isso está certo para provedores de backup, errado para simples peers.`, propozycja: 'Não há objeto ASPA. O ASPA complementa os ROA: protege contra caminhos de AS falsificados e vazamentos de rotas, o que os ROA não fazem. Abaixo há uma proposta pronta com os upstreams visíveis no BGP.', ok: (l) => `O objeto ASPA existe (provedores: ${l}).`, brakOp: (op) => `O objeto ASPA não inclui o AS${op}. Após o desvio, o caminho pelo centro de scrubbing será inválido para as redes que validam ASPA — adicione o AS${op} à lista de provedores.`, info: 'Não há objeto ASPA. Não é obrigatório; se criar um, inclua também o AS do centro de scrubbing como provedor.' },
     opRoa: { ok: (op) => `Os ROA do AS${op} cobrem cada /24 (/48).`, blok: (op, n) => `O operador anuncia a partir do próprio AS, mas nenhum ROA do AS${op} cobre ${n} prefixos /24 (/48). As redes que validam RPKI descartarão esses anúncios.` },
     nieaktualne: { zal: (l) => `Objetos route com o seu AS para prefixos que não são anunciados: ${l}. Remova os obsoletos — a desorganização no IRR dificulta a verificação.` },
     higiena: {
@@ -168,7 +169,8 @@ window.NAPISY.pt = {
     ['Loops de roteamento', 'Se o operador devolver prefixos mais específicos do seu espaço, filtre-os na sessão para evitar um loop.'],
     ['Filtragem de clientes', 'Filtre as rotas dos clientes com base no AS-SET e nos objetos route deles, e verifique o tamanho do conjunto antes de aceitá-lo. Esse filtro é a única barreira contra um vazamento de rotas (route leak) de um cliente.'],
     ['Teste a seco', 'Teste o desvio de um /24 fora de um ataque e verifique num looking glass se ele está visível e RPKI-valid.'],
-    ['RTBH', 'Não amplie os ROA para RTBH (prefixos /32, community BLACKHOLE do RFC 7999) — o RFC 9319 §6 desaconselha isso expressamente. O desvio para um centro de scrubbing e o RTBH são assuntos distintos.']
+    ['RTBH', 'Não amplie os ROA para RTBH (prefixos /32, community BLACKHOLE do RFC 7999) — o RFC 9319 §6 desaconselha isso expressamente. O desvio para um centro de scrubbing e o RTBH são assuntos distintos.'],
+    ['Validação ASPA nos seus roteadores', 'Quando seus roteadores suportarem ASPA: rejeite rotas inválidas em vez de baixar a preferência delas, use a verificação upstream para clientes e peers e a downstream para provedores. Comece registrando em log e avise os clientes que não incluíram você como provedor.']
   ],
   podstawa: [
     ['RFC 6811', 'estados de validação de origem: valid, invalid, not found (sem ROA)'],
@@ -184,10 +186,12 @@ window.NAPISY.pt = {
     ['MANRS', 'registro em IRR e RPKI, contatos atualizados; AS-SET como cone de clientes (módulo 2)'],
     ['Lasse Jarlskov (Telia Company)', '“Securing your AS-set” (BalticNOG 2025), “Prelude to a BGP hijack?” (DKNOG15): finalidade e tamanho do AS-SET, quem inclui você'],
     ['Doug Madory, Job Snijders', '“The Scourge of Excessive AS-SETs” (2025): AS-SET superdimensionados e vazamentos de rotas'],
+    ['Ondřej Caletka (RIPE NCC)', '“Autonomous System Provider Authorisation” (DKNOG16, 2026): quem incluir no ASPA, verificação upstream e downstream'],
     ['Operadores', 'documentação pública de ativação de operadores conhecidos de centros de scrubbing: prefixo mínimo, ROA, IRR numa base de dados de RIR, LOA, túnel']
   ],
   podstawaLink: 'Lista completa de fontes com links',
   obiektRoa: 'ROA a criar no portal RPKI do seu RIR',
+  obiektAspa: 'Objeto ASPA proposto (revise a lista antes de criá-lo)',
   obiektRoute: 'Objetos route (RPSL)',
   stopka: 'O resultado tem caráter apenas informativo e baseia-se em dados públicos no momento da verificação. Os requisitos finais são definidos pelo operador do centro de scrubbing.'
 };

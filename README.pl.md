@@ -1,6 +1,6 @@
 # Test gotowości prefiksów do scrubbing center
 
-![Wersja 1.1.0](https://img.shields.io/badge/wersja-1.1.0-B72343)
+![Wersja 1.2.0](https://img.shields.io/badge/wersja-1.2.0-B72343)
 ![5 RIR](https://img.shields.io/badge/RIR-RIPE%20%C2%B7%20ARIN%20%C2%B7%20APNIC%20%C2%B7%20AFRINIC%20%C2%B7%20LACNIC-1a56db)
 ![10 języków](https://img.shields.io/badge/j%C4%99zyki-10-1a56db)
 ![Bez serwera](https://img.shields.io/badge/serwer-brak-11603b)
@@ -31,7 +31,7 @@ Gdy atak przekracza przepustowość łączy, ruch kieruje się do scrubbing cent
 - AS-SET zawiera Twój AS, jest w bazie RIR i ma nazwę hierarchiczną;
 - AS-SET w PeeringDB;
 - co najmniej dwóch operatorów nadrzędnych;
-- ASPA zawiera AS operatora scrubbing center;
+- **ASPA**: providerzy widoczni w BGP, a brakujący w ASPA; wpisy niewidoczne w BGP; ASPA bez providerów (AS0) mimo widocznych operatorów nadrzędnych; AS operatora scrubbing center; gotowa propozycja obiektu ASPA;
 - ROA dla AS operatora, gdy to on jest źródłem ogłoszenia;
 - nieaktualne obiekty route.
 
@@ -186,7 +186,7 @@ Nie ma serwera ITORO. Numer AS trafia z przeglądarki prosto do publicznych serw
 
 ## Co nowego
 
-**1.1.0, 17 października 2026:** testy higieny AS-SET, „kto włącza Twój AS”, wersja do pobrania (`start.bat`, `start.sh`, Docker z bgpq4) z listami prefiksów, pełne imiona i nazwiska autorów w źródłach. **1.0.0, 15 października 2026:** pierwsze wydanie. Szczegóły w [CHANGELOG.md](CHANGELOG.md).
+**1.2.0, 19 października 2026:** testy ASPA według wystąpienia Ondřeja Caletki na DKNOG16: providerzy brakujący w ASPA, wpisy niewidoczne w BGP, ASPA bez providerów przy widocznych operatorach nadrzędnych, gotowa propozycja ASPA, zasady ASPA i punkt na liście kontrolnej. **1.1.0, 17 października 2026:** testy higieny AS-SET, „kto włącza Twój AS”, wersja do pobrania (`start.bat`, `start.sh`, Docker z bgpq4) z listami prefiksów, pełne imiona i nazwiska autorów w źródłach. **1.0.0, 15 października 2026:** pierwsze wydanie. Szczegóły w [CHANGELOG.md](CHANGELOG.md).
 
 ## Źródła i autorzy
 
@@ -231,13 +231,14 @@ Testy opierają się na czterech rodzajach źródeł: dokumentach RFC organizacj
 
 Właściciela zasobu i kontakt abuse narzędzie pobiera przez RDAP dla każdego RIR. Właściwy serwer wskazuje [bootstrap IANA](https://data.iana.org/rdap/).
 
-### 4. Higiena AS-SET: wystąpienia i artykuły
+### 4. Higiena AS-SET i ASPA: wystąpienia i artykuły
 
 | Autor | Tytuł, miejsce, data | Co z tego bierzemy | Test w narzędziu |
 |---|---|---|---|
 | Lasse Jarlskov (Telia Company) | „Securing your AS-set”, [BalticNOG 2025](https://events.balticnog.org/event/1/contributions/51/), Wilno, 25 września 2025 r.; to samo wystąpienie na spotkaniu Netnod 8 października 2025 r. ([slajdy, PDF](https://www.netnod.se/sites/default/files/2025-10/10.Securing%20your%20AS-Set-Netnod.pptx_.pdf)) | trzy rodzaje AS-SET (klienci, peerzy, członkowie IXP), z których do budowy filtrów służy tylko zbiór klientów; zasada „czy ogłosiłbyś to dalej w BGP?”; większy zbiór nie jest lepszy, a rekurencja bywa groźna; regularne porządki; sprawdzanie rozmiaru AS-SET klientów; sprawdzanie, kto Cię włącza | rozmiar AS-SET wobec klientów widocznych w BGP, głębokość zagnieżdżeń, największe składowe, zbiory IXP i peerów w zbiorze klientów, członkowie niewidoczni w BGP, kto włącza Twój AS |
 | Lasse Jarlskov (Telia Company); część o ASPA z Jobem Snijdersem | „Prelude to a BGP hijack?”, [DKNOG15](https://events.dknog.dk/event/32/contributions/297/), Kopenhaga, 7 marca 2025 r. ([nagranie](https://www.youtube.com/watch?v=ejwp6b6lVWQ)) | każdy może dopisać Twój AS do swojego AS-SET; przy sfałszowanym origin trasa jest zgodna z ROA i przechodzi filtry RPSL operatora tranzytowego; obrona: ASPA i monitorowanie IRR pod kątem nowych odwołań do Twojego AS | kto włącza Twój AS (zbiory sieci bez relacji BGP są oznaczane); zalecenie ASPA; krok o monitoringu |
 | Doug Madory, Job Snijders | [„The Scourge of Excessive AS-SETs”](https://www.kentik.com/blog/the-scourge-of-excessive-as-sets/), blog Kentik, 23 kwietnia 2025 r. | tysiące AS-SET rozwijają się do ponad 1000 AS, niektóre do więcej niż cała tablica routingu; takie filtry nie zatrzymały rzeczywistych wycieków tras; członków ma być jak najmniej, bez rekurencji, z nazwą hierarchiczną i z autorytatywnym źródłem IRR wskazanym w PeeringDB | rozmiar i głębokość AS-SET, nazwa hierarchiczna, AS-SET w PeeringDB ze źródłem |
+| Ondřej Caletka (RIPE NCC) | „Autonomous System Provider Authorisation — New tool for routing security”, [DKNOG16](https://events.dknog.dk/event/35/contributions/311/), marzec 2026 r. ([slajdy, PDF](https://events.dknog.dk/event/35/contributions/311/attachments/138/352/DKNOG16-ASPA.pdf)) | ROA nie chroni przed podrobioną ścieżką AS ani przed wyciekiem z zachowaną ścieżką, a ASPA tak; wpisać wszystkich providerów, także zapasowych; nie wpisywać zwykłych peerów; wpisać nietransparentne route servery IXP; aktualizować ASPA razem z IRR; na routerach odrzucać invalid, zacząć od logowania, uprzedzać klientów, którzy nie wpisali Cię jako providera | providerzy widoczni w BGP, a brakujący w ASPA; wpisy w ASPA niewidoczne w BGP; ASPA bez providerów (AS0) przy widocznych operatorach nadrzędnych; gotowa propozycja ASPA; zasady ASPA w planie działań; punkt na liście kontrolnej |
 | MANRS | [„Module 2: IRRs, RPKI, and PeeringDB”](https://manrs.org/resources/training/tutorials/irrs-rpki-peeringdb/) (szkolenie MANRS) | stożek klientów opisany obiektem as-set (np. AS64500:AS-CUSTOMERS), obiekty route, polityka routingu w aut-num, aktualne PeeringDB | AS-SET w eksporcie aut-num, AS-SET zawiera Twój AS, PeeringDB |
 
 ### 5. Pozostałe źródła
@@ -278,6 +279,7 @@ Pominęliśmy Radware, NETSCOUT Arbor Cloud, Corero, Voxility, Path.net i polski
 | LOA, gdy przestrzeń należy do innej organizacji albo jest przestrzenią PA od LIR | Cloudflare, F5, Gcore |
 | ROA dla AS operatora, gdy to on jest źródłem ogłoszenia | RFC 9319 §5.1; Lumen |
 | ASPA zawiera AS operatora | IETF SIDROPS (ASPA) |
+| ASPA obejmuje wszystkich providerów widocznych w BGP, brak ASPA z AS0 przy widocznych operatorach, propozycja ASPA | Ondřej Caletka (DKNOG16, 2026); IETF SIDROPS (ASPA) |
 | abuse-c | ripe-705, polityki APNIC, AFRINIC i LACNIC; MANRS |
 | AS-SET zawiera Twój AS, nazwa hierarchiczna | RFC 2622; dokumentacja bazy RIPE i APNIC; MANRS |
 | ROA z AS0, obiekty route z innym origin | RFC 6483; RFC 6811 |

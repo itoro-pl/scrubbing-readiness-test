@@ -21,7 +21,7 @@ window.NAPISY.ro = {
   sprawdz: 'Verifică',
   sprawdzam: 'Se verifică…',
   czas: 'Rezultatul în câteva secunde. Browserul dumneavoastră preia datele din servicii publice (printre altele baza de date RIPE, registrele IRR și PeeringDB).',
-  wersja: 'Versiunea 1.1.0 · 17 octombrie 2026',
+  wersja: 'Versiunea 1.2.0 · 19 octombrie 2026',
   itoroNad: 'Instrumente oferite de ITORO',
   itoroH2: 'Îmbunătățim securitatea rețelei dumneavoastră',
   itoroP1: 'Implementăm și operăm sisteme de protecție împotriva atacurilor DDoS, în principal în rețelele operatorilor de telecomunicații și în centrele de date.',
@@ -64,6 +64,7 @@ window.NAPISY.ro = {
     loa: ['Întocmiți lista prefixelor din acest pas și deținătorul fiecăruia (date din baza de date RIR).', 'Cereți deținătorului spațiului de adrese — și operatorului din amonte, dacă el anunță prefixul — să semneze o LOA pe baza modelului de mai jos.', 'Operatorii acceptă de regulă LOA ca PDF pe hârtie cu antetul firmei, semnată de o persoană autorizată.'],
     asset: ['Regulă de bază: în AS-SET puneți doar ce anunțați mai departe în BGP — propria rețea și clienții dumneavoastră. Nu adăugați IXP-uri sau peeri.', 'Înainte de a include AS-SET-ul unui client, verificați-i dimensiunea; eliminați clienții care au plecat și revizuiți setul în mod regulat.'],
     wlaczenia: ['Parcurgeți lista seturilor din acest pas. Deținătorul se găsește în obiectul as-set (mnt-by, admin-c) din baza de date IRR.', 'Dacă un set aparține unei rețele cu care nu aveți o relație BGP, cereți eliminarea AS-ului dumneavoastră. Dacă nu primiți răspuns, raportați situația operatorului bazei de date IRR.', 'Publicați un ASPA cu lista operatorilor dumneavoastră din amonte — limitează uzurparea AS-ului dumneavoastră prin AS-SET-urile altor rețele.', 'Configurați o monitorizare permanentă a noilor AS-SET care fac referire la AS-ul dumneavoastră.'],
+    aspa: ['Includeți toți furnizorii, inclusiv pe cei de rezervă, chiar dacă astăzi nu apar în calea AS.', 'Nu includeți simpli peeri, decât dacă unul dintre ei acționează ca furnizor pentru dumneavoastră.', 'Includeți route serverele IXP netransparente pe care le folosiți — altfel AS-ul lor este văzut ca o vale în cale.', 'Actualizați ASPA împreună cu IRR: fiecare schimbare de operator de tranzit este o modificare în ambele locuri.'],
     pdb: ['Autentificați-vă pe peeringdb.com și deschideți înregistrarea rețelei dumneavoastră (Network).', 'În câmpul „IRR as-set/route-set” introduceți AS-SET-ul împreună cu sursa, de ex. RIPE::AS64496:AS-CLIENTI.', 'Salvați și verificați că valoarea corespunde cu aut-num.'],
     inne: []
   },
@@ -108,7 +109,7 @@ window.NAPISY.ro = {
     assetHier: { ok: (s) => `${s} are un nume ierarhic.`, zal: (s) => `${s} are un nume scurt. Seturile noi se creează cu prefixul AS (de ex. AS64496:AS-CLIENTI, RFC 2622) — acest lucru protejează împotriva uzurpării numelui în alte registre.` },
     pdb: { ok: (s) => `PeeringDB: înregistrarea există, AS-SET ${s}.`, zal: 'Lipsește înregistrarea din PeeringDB sau câmpul AS-SET este gol. Mulți operatori construiesc filtre pe baza AS-SET din PeeringDB.', roz: (a, b) => `AS-SET din PeeringDB (${a}) diferă de AS-SET din aut-num (${b}).` },
     upstream: { ok: (n) => `Operatori din amonte vizibili în BGP: ${n}.`, zal: (n) => `Este vizibil doar ${n} operator din amonte. Cu o singură legătură, atacul o saturează înainte ca redirecționarea să intre în funcțiune — luați în considerare o a doua legătură sau RTBH și BGP FlowSpec la operator.` },
-    aspa: { ok: (l) => `Obiectul ASPA există (provideri: ${l}).`, brakOp: (op) => `Obiectul ASPA nu include AS${op}. După redirecționare, calea prin centrul de scrubbing va fi considerată invalidă de rețelele care validează ASPA — adăugați AS${op} în lista de provideri.`, info: 'Lipsește obiectul ASPA. Nu este obligatoriu; dacă îl creați, includeți în listă și AS-ul centrului de scrubbing.' },
+    aspa: { as0: (l) => `Obiectul ASPA spune că AS-ul dumneavoastră nu are furnizori (AS0), dar în BGP se văd operatori din amonte: ${l}. Când rețelele vor respinge rutele ASPA-invalid, toate rutele prin ei se vor pierde — includeți-i în ASPA.`, brakuje: (l) => `În ASPA lipsesc AS-uri vizibile în BGP ca operatori din amonte ai dumneavoastră: ${l}. Dacă sunt furnizorii dumneavoastră, adăugați-i — altfel rutele prin ei vor fi ASPA-invalid. Dacă sunt doar peeri, nu-i adăugați.`, niewidoczni: (l) => `ASPA conține AS-uri care astăzi nu se văd în BGP ca operatori din amonte ai dumneavoastră: ${l}. Este corect pentru furnizorii de rezervă, greșit pentru simpli peeri.`, propozycja: 'Nu există obiect ASPA. ASPA completează ROA: protejează împotriva căilor AS falsificate și a scurgerilor de rute, ceea ce ROA nu face. Mai jos este o propunere gata făcută cu operatorii din amonte vizibili în BGP.', ok: (l) => `Obiectul ASPA există (provideri: ${l}).`, brakOp: (op) => `Obiectul ASPA nu include AS${op}. După redirecționare, calea prin centrul de scrubbing va fi considerată invalidă de rețelele care validează ASPA — adăugați AS${op} în lista de provideri.`, info: 'Lipsește obiectul ASPA. Nu este obligatoriu; dacă îl creați, includeți în listă și AS-ul centrului de scrubbing.' },
     opRoa: { ok: (op) => `ROA pentru AS${op} acoperă fiecare /24 (/48).`, blok: (op, n) => `Operatorul anunță din propriul AS, dar ROA pentru AS${op} nu acoperă o parte din prefixele /24 (/48) (număr: ${n}). Rețelele care validează RPKI vor respinge aceste anunțuri.` },
     nieaktualne: { zal: (l) => `Obiecte route cu AS-ul dumneavoastră pentru prefixe pe care nu le anunțați: ${l}. Ștergeți-le pe cele învechite — dezordinea din IRR îngreunează verificarea la operator.` },
     higiena: {
@@ -168,7 +169,8 @@ window.NAPISY.ro = {
     ['Bucle de rutare', 'Dacă operatorul vă trimite înapoi prefixe mai specifice din spațiul dumneavoastră, filtrați-le pe sesiune pentru a evita o buclă.'],
     ['Filtrarea clienților', 'Filtrați rutele clienților pe baza AS-SET-ului și a obiectelor route ale acestora și verificați dimensiunea setului înainte de a-l accepta. Acest filtru este singura barieră împotriva unui route leak de la un client.'],
     ['Test la rece', 'Testați redirecționarea unui /24 în afara unui atac și verificați într-un looking glass că prefixul este vizibil și RPKI-valid.'],
-    ['RTBH', 'Nu lărgiți ROA pentru RTBH (prefixe /32, community BLACKHOLE din RFC 7999) — RFC 9319 §6 descurajează explicit acest lucru. Redirecționarea către un centru de scrubbing și RTBH sunt lucruri separate.']
+    ['RTBH', 'Nu lărgiți ROA pentru RTBH (prefixe /32, community BLACKHOLE din RFC 7999) — RFC 9319 §6 descurajează explicit acest lucru. Redirecționarea către un centru de scrubbing și RTBH sunt lucruri separate.'],
+    ['Validarea ASPA pe routerele dumneavoastră', 'Când routerele dumneavoastră vor suporta ASPA: respingeți rutele invalide în loc să le scădeți preferința, folosiți verificarea upstream pentru clienți și peeri și verificarea downstream pentru furnizori. Începeți cu logarea și anunțați clienții care nu v-au inclus ca furnizor.']
   ],
   podstawa: [
     ['RFC 6811', 'stările validării originii: valid, invalid, fără ROA'],
@@ -184,10 +186,12 @@ window.NAPISY.ro = {
     ['MANRS', 'înregistrare în IRR și RPKI, contacte actualizate; AS-SET ca descriere a conului de clienți (modulul 2)'],
     ['Lasse Jarlskov (Telia Company)', '„Securing your AS-set” (BalticNOG 2025), „Prelude to a BGP hijack?” (DKNOG15): scopul AS-SET, dimensiunea, cine vă include'],
     ['Doug Madory, Job Snijders', '„The Scourge of Excessive AS-SETs” (2025): AS-SET supradimensionate și route leaks'],
+    ['Ondřej Caletka (RIPE NCC)', '„Autonomous System Provider Authorisation” (DKNOG16, 2026): pe cine includeți în ASPA, verificarea upstream și downstream'],
     ['Operatori', 'documentația publică de implementare a unor operatori cunoscuți de centre de scrubbing: prefix minim, ROA, IRR într-o bază de date RIR, LOA, tunel']
   ],
   podstawaLink: 'Lista completă a surselor, cu linkuri',
   obiektRoa: 'ROA de creat în portalul RPKI al RIR-ului dumneavoastră',
+  obiektAspa: 'Obiect ASPA propus (verificați lista înainte de a-l crea)',
   obiektRoute: 'Obiecte route (RPSL)',
   stopka: 'Rezultatul are caracter informativ și se bazează pe datele publice din momentul verificării. Cerințele finale sunt stabilite de operatorul centrului de scrubbing.'
 };

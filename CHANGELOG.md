@@ -1,5 +1,19 @@
 # Changelog / Lista zmian
 
+## 1.2.0 — 2026-10-19
+
+**EN**
+- ASPA checks, after Ondřej Caletka (RIPE NCC), „Autonomous System Provider Authorisation” (DKNOG16, March 2026): providers visible in BGP but missing from your ASPA (to fix), ASPA entries not visible in BGP (info: backup provider or peer?), provider-free ASPA (AS0) despite visible upstreams (blocking), and a ready ASPA proposal built from the upstreams visible in BGP and the scrubbing centre's AS.
+- Networks with more than 10 left-hand BGP neighbours (e.g. anycast present at many IXPs) get no automatic proposal and missing entries are shown as information, because most of those neighbours are peers.
+- Action-plan step „Complete ASPA”: whom to list (all providers incl. backup, no plain peers, non-transparent IXP route servers) and updating ASPA together with the IRR.
+- Manual checklist: ASPA validation on your routers.
+
+**PL**
+- Testy ASPA według Ondřeja Caletki (RIPE NCC), „Autonomous System Provider Authorisation” (DKNOG16, marzec 2026): providerzy widoczni w BGP, a brakujący w ASPA (do poprawy), wpisy w ASPA niewidoczne w BGP (informacja: provider zapasowy czy peer?), ASPA bez providerów (AS0) mimo widocznych operatorów nadrzędnych (blokuje) oraz gotowa propozycja ASPA z operatorów widocznych w BGP i AS operatora scrubbing center.
+- Sieci z więcej niż 10 sąsiadami „left” w BGP (np. anycast obecny na wielu IXP) nie dostają automatycznej propozycji, a braki są pokazywane jako informacja, bo większość tych sąsiadów to peerzy.
+- Krok planu „Uzupełnij ASPA”: kogo wpisać (wszystkich providerów, także zapasowych, bez zwykłych peerów, z nietransparentnymi route serverami IXP) i aktualizacja ASPA razem z IRR.
+- Lista kontrolna: walidacja ASPA na routerach.
+
 ## 1.1.0 — 2026-10-17
 
 **EN**
